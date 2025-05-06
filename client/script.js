@@ -127,12 +127,12 @@ const handleSubmit = async (e) => {
     loader(messageDiv);
 
     // Backend API URLs
-    const live = 'https://infogenius-ai.onrender.com';
+    const live = 'https://updatedai-x4al.onrender.com';
     const dev = 'http://localhost:5000';
 
     try {
         // Send the user's message to the backend for processing
-        const response = await fetch(dev, {
+        const response = await fetch(live, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
