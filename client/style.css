@@ -1,0 +1,151 @@
+@import url("https://fonts.googleapis.com/css2?family=Alegreya+Sans:wght@100;300;400;500;700;800;900&display=swap");
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Alegreya Sans", sans-serif;
+}
+
+body {
+    background: #f5f5f7;
+}
+
+#app {
+    width: 100vw;
+    height: 100vh;
+    background: #5075a7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+#chat_container {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+
+    padding-bottom: 20px;
+    scroll-behavior: smooth;
+}
+
+/* hides scrollbar */
+#chat_container::-webkit-scrollbar {
+    display: none;
+}
+
+.wrapper {
+    width: 100%;
+    padding: 15px;
+}
+
+.ai {
+    background: #486476;
+    border-radius: 15px;
+}
+
+.chat {
+    width: 100%;
+    max-width: 1280px;
+    margin: 0 auto;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.profile {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+
+    background: #5436DA;
+    border-radius: 100px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ai .profile {
+    background: #486476;
+}
+
+.profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.message {
+    flex: 1;
+
+    color: #dcdcdc;
+    font-size: 16px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    max-width: 100%;
+    overflow-x: scroll;
+    white-space: pre-wrap;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* hides scrollbar */
+.message::-webkit-scrollbar {
+    display: none;
+}
+
+/* Style hyperlinks within the chat messages */
+.message a {
+    color: #00FF00; /* Link color */
+    text-decoration: underline; /* Underline the link */
+}
+
+form {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 7px;
+    background: #1d517d;
+    border-radius: 10px;
+
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+}
+
+textarea {
+    width: 100%;
+
+    color: #fff;
+    font-size: 18px;
+
+    padding: 10px;
+    background: transparent;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+
+button {
+    outline: 0;
+    border: 0;
+    cursor: pointer;
+    background: none;
+}
+
+form img {
+    width: 30px;
+    height: 30px;
+}
