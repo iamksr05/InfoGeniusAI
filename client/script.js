@@ -123,7 +123,7 @@ const handleSubmit = async (e) => {
     // Specific message div for the bot response
     const messageDiv = document.getElementById(uniqueId);
 
-    // Show loading indicator while waiting for response
+    // Show loading indicator while waiting for response.
     loader(messageDiv);
 
     // Backend API URLs
