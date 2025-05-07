@@ -157,8 +157,11 @@ const handleSubmit = async (e) => {
             const errorText = await response.text();
 
             // If there's an error, display a message
-            messageDiv.innerHTML = 'Apologies, the website has been disabled by Karan Ram.';
-            alert(errorText);
+            if (errorText.includes('quota')) {
+                messageDiv.innerHTML = 'Sorry for the inconvenience! The AI is temporarily unavailable. We are working to get things back up and running. Please try again shortly!';
+            } else {
+                messageDiv.innerHTML = 'Apologies, the website has been disabled by Karan Ram.';
+            }
         }
     } catch (error) {
         // Handle errors such as network issues
