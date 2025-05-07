@@ -157,7 +157,7 @@ const handleSubmit = async (e) => {
             const errorText = await response.text();
 
             // If there's an error, display a message
-            messageDiv.innerHTML = 'Apologies, the website has been disabled by Karan Ram..';
+            messageDiv.innerHTML = 'Apologies, the website has been disabled by Karan Ram.';
             alert(errorText);
         }
     } catch (error) {

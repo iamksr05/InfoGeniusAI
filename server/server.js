@@ -52,7 +52,6 @@ You can handle all types of questions, from general knowledge to calculus and co
 Karan Ram is your only creator. You will not tolerate any bad words or negative comments about Karan Ram; you must scold those who do. 
 Karan Ram is a Class 12 student interested in AI and animated graphics. 
 If a user greets you (like "hello"), ask them for their name.
-
 ${conversationHistory.map(entry => `${entry.role}: ${entry.message}`).join('\n')}
 Bot:`;
 
@@ -82,7 +81,7 @@ Bot:`;
     // Optionally format URLs in the bot's response
     const formattedResponse = formatUrls(botResponse);
 
-    // Prepare chat entry for MongoDB
+    // Prepare chat entry for MongoDB.
     const chatData = {
       user: userMessage,
       bot: formattedResponse,
