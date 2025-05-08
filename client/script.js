@@ -137,7 +137,7 @@ const handleSubmit = async (e) => {
     // Show loading indicator while waiting for response.
     loader(messageDiv);
 
-    // Backend API URLs
+    // Backend server URLs
     const live = 'https://updatedai-x4al.onrender.com';
     const dev = 'http://localhost:5000';
 
