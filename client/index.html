@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="https://i.postimg.cc/d18HJbYD/AI-logo.png" />
@@ -9,9 +10,10 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="theme-color" content="#000000">
 
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>InfoGenius AI</title>
-    <link rel="stylesheet" href="style.css?v=2">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -25,17 +27,18 @@
             </button>
         </form>
 
+        <!-- Add some space between the instruction message and the bottom of the screen -->
         <div style="margin-bottom: 6px;">
+            <!-- Center-align the instruction message on mobile devices and apply a small font -->
             <span
                 style="color:#FFFFFF; margin: 0 auto; display: block; text-align: center; font-family: 'Arial', sans-serif; font-size: 12.9px;">
                 The InfoGenius AI is being developed; hence, it may not produce all outputs correctly. It is recommended
-                to run the InfoGenius AI on a PC.
+                to run the
+                InfoGenius AI on a PC.
             </span>
         </div>
     </div>
-
-    <script>
-        if ('serviceWorker' in navigator) {
+    <script>  if ('serviceWorker' in navigator) {
             window.addEventListener('load', function () {
                 navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
                     console.log('Service Worker registered with scope:', registration.scope);
@@ -45,6 +48,7 @@
             });
         }
     </script>
-    <script type="module" src="script.js?v=2"></script>
+    <script type="module" src="script.js"></script>
 </body>
+
 </html>
