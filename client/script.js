@@ -198,13 +198,4 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-
-    // Optional: Change the send button's image when there is text in the input box
-    promptInput.addEventListener('input', function () {
-        if (promptInput.value.trim().length > 0) {
-            sendIcon.src = './assets/send.svg';
-        } else {
-            sendIcon.src = './assets/unsend.svg';
-        }
-    });
 });
