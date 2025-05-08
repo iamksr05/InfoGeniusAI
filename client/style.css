@@ -149,3 +149,41 @@ form img {
     width: 30px;
     height: 30px;
 }
+
+@keyframes sendAnimation {
+    0% {
+      transform: scale(1) rotate(0deg);
+    }
+    50% {
+      transform: scale(1.2) rotate(20deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+  
+  .animate-send {
+    animation: sendAnimation 0.4s ease;
+  }
+  
+
+  @keyframes coolSend {
+    0% {
+      transform: scale(1) rotate(0deg) translateY(0);
+      opacity: 1;
+    }
+    30% {
+      transform: scale(1.2) rotate(15deg) translateY(-6px);
+    }
+    60% {
+      transform: scale(0.9) rotate(-10deg) translateY(2px);
+    }
+    100% {
+      transform: scale(1) rotate(0deg) translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-cool-send {
+    animation: coolSend 0.5s ease;
+  }

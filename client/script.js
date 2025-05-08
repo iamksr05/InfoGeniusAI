@@ -113,6 +113,17 @@ const handleSubmit = async (e) => {
     // Clear the textarea input
     form.reset();
 
+    // Animate the send icon
+    sendIcon.classList.add('animate-send');
+
+    // Animate the send icon
+    sendIcon.classList.add('animate-send');
+
+    // Remove the animation class after it ends so it can trigger again next time
+    sendIcon.addEventListener('animationend', () => {
+        sendIcon.classList.remove('animate-send');
+    }, { once: true });
+
     // Bot's chat stripe
     const uniqueId = generateUniqueId();
     chatContainer.innerHTML += chatStripe(true, ' ', uniqueId);
@@ -132,7 +143,7 @@ const handleSubmit = async (e) => {
 
     try {
         // Send the user's message to the backend for processing
-        const response = await fetch(live, {
+        const response = await fetch(dev, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -174,25 +185,25 @@ const handleSubmit = async (e) => {
 // Event listeners to handle form submission and input behavior
 document.addEventListener('DOMContentLoaded', function () {
     const promptInput = document.getElementById('prompt');
-    const sendButton = document.querySelector('form button img');
+    const sendIcon = document.getElementById('sendIcon');
 
     document.getElementById('prompt').focus();
 
     form.addEventListener('submit', handleSubmit);
     form.addEventListener('keydown', (e) => {
-        // Check if the Enter key is pressed and Shift key is not pressed
         if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault(); // Prevent the default behavior of Enter key only when Shift key is not pressed
-            handleSubmit(e); // Call the submit function
+            e.preventDefault();
+            handleSubmit(e);
         }
     });
+
 
     // Optional: Change the send button's image when there is text in the input box
     promptInput.addEventListener('input', function () {
         if (promptInput.value.trim().length > 0) {
-            sendButton.src = '/assets/send.svg';
+            sendIcon.src = './assets/send.svg';
         } else {
-            sendButton.src = '/assets/unsend.svg';
+            sendIcon.src = './assets/unsend.svg';
         }
     });
 });
