@@ -2,7 +2,7 @@
     "name": "InfoGenius AI",
     "short_name": "InfoGenius",
     "description": "An AI that does everything.",
-    "start_url": "https://info-genius-ai-karankr005.vercel.app",
+    "start_url": "https://updated-ai-karan-rams-projects.vercel.app",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#000000",
@@ -11,7 +11,7 @@
             "src": "/icons/image-144x144.png",
             "sizes": "144x144",
             "type": "image/png"
-        },
+        }, 
         {
             "src": "/icons/trace192.svg",
             "sizes": "192x192",
