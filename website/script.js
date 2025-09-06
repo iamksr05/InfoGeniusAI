@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 return;
             }
             
-            window.location.href = "https://info-genius-ai-karankr005.vercel.app";
+            window.location.href = "https://infogeniusai.vercel.app";
         };
         
         nameInput.addEventListener("keyup", (event) => {
