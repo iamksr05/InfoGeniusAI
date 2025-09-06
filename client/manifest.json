@@ -2,7 +2,7 @@
     "name": "InfoGenius AI",
     "short_name": "InfoGenius",
     "description": "An AI that does everything.",
-    "start_url": "https://updated-ai-karan-rams-projects.vercel.app/?source=pwa",
+    "start_url": "https://infogeniusai.vercel.app/?source=pwa",
     "scope": "/",
     "orientation": "portrait",
     "display": "standalone",
