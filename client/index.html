@@ -1,55 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>InfoGenius AI</title>
-    
+
     <!-- Meta -->
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="theme-color" content="#000000">
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="theme-color" content="#000000" />
 
     <!-- Favicon & Manifest -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#000000" />
 
     <!-- Styles -->
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
     <div id="app">
-        <div id="chat_container" style="margin-bottom: 10px;"></div>
+      <div id="chat_container" style="margin-bottom: 10px"></div>
 
-        <form style="margin-bottom: 6px;">
-            <textarea id="prompt" name="prompt" rows="1" cols="1" placeholder="Type any message..."></textarea>
-            <button type="submit">
-                <!-- STATIC IMAGE, does NOT change -->
-                <img id="sendIcon" src="./assets/send.svg" alt="send" />
-            </button>
-        </form>
+      <form style="margin-bottom: 6px">
+        <textarea
+          id="prompt"
+          name="prompt"
+          rows="1"
+          cols="1"
+          placeholder="Type any message..."
+        ></textarea>
+        <button type="submit">
+          <!-- STATIC IMAGE, does NOT change -->
+          <img id="sendIcon" src="./assets/send.svg" alt="send" />
+        </button>
+      </form>
 
-        <div style="margin-bottom: 6px;">
-            <span style="color:#FFFFFF; margin: 0 auto; display: block; text-align: center; font-family: 'Arial', sans-serif; font-size: 12.9px;">
-                InfoGenius AI is still developing; use on PC for better results.
-            </span>
-        </div>
+      <div style="margin-bottom: 6px">
+        <span
+          style="
+            color: #ffffff;
+            margin: 0 auto;
+            display: block;
+            text-align: center;
+            font-family: 'Arial', sans-serif;
+            font-size: 12.9px;
+          "
+        >
+          InfoGenius AI is still developing; use on PC for better results.
+        </span>
+      </div>
     </div>
 
     <!-- Optional: Service Worker -->
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function () {
-                navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
-                    console.log('Service Worker registered with scope:', registration.scope);
-                }).catch(function (error) {
-                    console.log('Service Worker registration failed:', error);
-                });
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .then(function (registration) {
+              console.log(
+                "Service Worker registered with scope:",
+                registration.scope
+              );
+            })
+            .catch(function (error) {
+              console.log("Service Worker registration failed:", error);
             });
-        }
+        });
+      }
     </script>
 
     <!-- JavaScript file (no changes needed) -->
     <script type="module" src="script.js"></script>
-</body>
+  </body>
 </html>
