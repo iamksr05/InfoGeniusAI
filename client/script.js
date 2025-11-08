@@ -73,7 +73,7 @@ function generateUniqueId() {
 // Function to create the chat stripe (bubble) for each message
 function chatStripe(isAi, value, uniqueId) {
   return `
-    <div class="wrapper ${isAi ? "ai" : ""}">
+    <div class="wrapper ${isAi ? "ai" : "user"}">
         <div class="chat">
             <div class="profile">
                 <img src="${isAi ? bot : user}" alt="${
@@ -195,6 +195,10 @@ const handleSubmit = async (e) => {
 document.addEventListener("DOMContentLoaded", function () {
   const promptInput = document.getElementById("prompt");
   const sendIcon = document.getElementById("sendIcon");
+
+  // Add initial AI greeting message
+  const initialMessage = "Hello! I'm your AI learning companion. How can I help you learn today?";
+  chatContainer.innerHTML = chatStripe(true, initialMessage, generateUniqueId());
 
   document.getElementById("prompt").focus();
 

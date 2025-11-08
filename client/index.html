@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>InfoGenius AI</title>
+    <title>AI Learning Companion</title>
 
     <!-- Meta -->
     <meta
@@ -22,36 +22,37 @@
   </head>
   <body>
     <div id="app">
-      <div id="chat_container" style="margin-bottom: 10px"></div>
+      <header id="header">
+        <div class="header-left">
+          <h1 class="app-title">AI Learning Companion</h1>
+          <div class="taglines">
+            <p class="tagline">🎯 Short, focused answers to keep you engaged</p>
+            <p class="tagline">💡 Responses optimized for ADHD users</p>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="status-indicator">
+            <span class="status-dot"></span>
+            <span class="status-text">AI Connected</span>
+          </div>
+        </div>
+      </header>
 
-      <form style="margin-bottom: 6px">
+      <div id="chat_container"></div>
+
+      <form>
         <textarea
           id="prompt"
           name="prompt"
           rows="1"
           cols="1"
-          placeholder="Type any message..."
+          placeholder="Ask me anything...🎯"
         ></textarea>
-        <button type="submit">
+        <button type="submit" id="sendButton">
           <!-- STATIC IMAGE, does NOT change -->
           <img id="sendIcon" src="./assets/send.svg" alt="send" />
         </button>
       </form>
-
-      <div style="margin-bottom: 6px">
-        <span
-          style="
-            color: #ffffff;
-            margin: 0 auto;
-            display: block;
-            text-align: center;
-            font-family: 'Arial', sans-serif;
-            font-size: 12.9px;
-          "
-        >
-          InfoGenius AI is still developing; use on PC for better results.
-        </span>
-      </div>
     </div>
 
     <!-- Optional: Service Worker -->
