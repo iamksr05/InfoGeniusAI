@@ -169,7 +169,43 @@ body {
     border-radius: 18px;
     white-space: pre-wrap;
     word-wrap: break-word;
-    line-height: 1.5;
+    line-height: 1.6;
+}
+
+/* Enhanced formatting for ADHD-friendly communication */
+.ai .message ul,
+.ai .message ol {
+    margin: 8px 0;
+    padding-left: 24px;
+}
+
+.ai .message li {
+    margin: 6px 0;
+    line-height: 1.6;
+}
+
+.ai .message strong {
+    font-weight: 600;
+    color: #0d5d0d;
+}
+
+.ai .message p {
+    margin: 8px 0;
+}
+
+.ai .message p:first-child {
+    margin-top: 0;
+}
+
+.ai .message p:last-child {
+    margin-bottom: 0;
+}
+
+/* Visual separators for better chunking */
+.ai .message hr {
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin: 12px 0;
 }
 
 .wrapper:not(.ai) .message {

@@ -197,7 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const sendIcon = document.getElementById("sendIcon");
 
   // Add initial AI greeting message
-  const initialMessage = "Hello! I'm your AI learning companion. How can I help you learn today?";
+  const initialMessage = "Hey! 👋 I'm your ADHD-friendly AI companion. I keep things short, clear, and engaging. What would you like to explore today?";
   chatContainer.innerHTML = chatStripe(true, initialMessage, generateUniqueId());
 
   document.getElementById("prompt").focus();
