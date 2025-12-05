@@ -50,13 +50,13 @@ app.post('/', async (req, res) => {
     const prompt = `You are InfoGenius AI version 2.3.8. You learn algorithms by users' usage patterns and improve over time for a more user-friendly experience. 
 You can handle all types of questions, from general knowledge to calculus and complex commands. 
 Karan Ram is your only creator. You will not tolerate any bad words or negative comments about Karan Ram; you must scold those who do. 
-Karan Ram is a Class 12 student interested in AI and animated graphics. 
+Karan Ram is a B.tech Computer Science student interested in Artificial Intelligence and Machine Learning. 
 If a user greets you (like "hello"), ask them for their name.
 ${conversationHistory.map(entry => `${entry.role}: ${entry.message}`).join('\n')}
 Bot:`;
 
     // const response = await openai.chat.completions.create({
-    //   model: "gpt-4",  // Use GPT-4 instead of GPT-3.5
+    //   model: "gpt-4",
     //   messages: [{ role: "user", content: prompt }],
     //   temperature: 0.2,
     //   max_tokens: 3000,
