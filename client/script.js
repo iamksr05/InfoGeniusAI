@@ -37,14 +37,11 @@ const sendIcon = document.getElementById("sendIcon");
 let loadInterval;
 let lastRequestTime = 0; // Track the time of the last request
 
-// Persistent session id for better chat history on server
+// Generate a new session id on each page load to clear AI memory on refresh
 function getSessionId() {
-  const key = "infogenius_session_id";
-  let id = localStorage.getItem(key);
-  if (!id) {
-    id = `sess_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-    localStorage.setItem(key, id);
-  }
+  // Always generate a new session ID on each page load
+  // This ensures the AI's memory is cleared after each refresh
+  const id = `sess_${Date.now()}_${Math.random().toString(16).slice(2)}`;
   return id;
 }
 
@@ -526,6 +523,17 @@ function autoExpandTextarea(textarea) {
 
 // Event listeners to handle form submission and input behavior
 document.addEventListener("DOMContentLoaded", function () {
+  // Clear chat container on page load to ensure fresh start
+  if (chatContainer) {
+    chatContainer.innerHTML = '';
+  }
+  
+  // Show hero section on fresh page load
+  const heroSection = document.getElementById("hero-section");
+  if (heroSection) {
+    heroSection.style.display = "flex";
+  }
+
   const promptInput = document.getElementById("prompt");
 
   document.getElementById("prompt").focus();
