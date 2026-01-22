@@ -41,7 +41,7 @@ if (!GEMINI_API_KEY) {
   console.warn('Using fallback API key (this may have quota limits)');
 }
 
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || "AIzaSyCHV3zbAVis7F4G0Osq7tMVigXf4lBaWyk");
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || "AIzaSyC3xbj5s-is2n7_7SlL7gnv236REZjIXCA");
 const geminiModel = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
 // Log which API key is being used (first 10 chars for security)
