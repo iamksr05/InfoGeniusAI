@@ -2,6 +2,7 @@ import express from 'express';
 import * as dotenv from 'dotenv';
 import cors from 'cors';
 import { OpenAI } from 'openai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { MongoClient } from 'mongodb';
 
 dotenv.config(); // Load environment variables
@@ -21,6 +22,10 @@ if (!process.env.OPENAI_API_KEY) {
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
+// Initialize Gemini SDK
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "AIzaSyC7v-IU-UUCI-0w5ylBtrIaL9EY81VjlQM");
+const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
 // Initialize MongoDB client (no deprecated options needed in v6+)
 let client = null;
@@ -99,6 +104,7 @@ app.post('/', async (req, res) => {
   try {
     const userMessage = req.body.prompt;
     const sessionId = (req.body.sessionId && String(req.body.sessionId)) || 'default';
+    const modelProvider = req.body.model || 'openai'; // 'openai' or 'gemini'
     const istTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
 
     let recentHistory = [];
@@ -109,7 +115,7 @@ app.post('/', async (req, res) => {
         const database = client.db('ChatDB');
         const collection = database.collection('MyHistory');
         const now = new Date();
-        
+
         // Persist user message
         await collection.insertOne({
           sessionId,
@@ -151,18 +157,55 @@ app.post('/', async (req, res) => {
       })),
     ];
 
-    // Using GPT-3.5 Turbo for cost-effective responses
-    const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages,
-      temperature: 0.2,
-      max_tokens: 2000,
-      top_p: 1,
-      frequency_penalty: 0.5,
-      presence_penalty: 0,
-    });
 
-    const botResponse = response?.choices?.[0]?.message?.content || "Sorry, I couldn't generate a response.";
+
+    let botResponse = "Sorry, I couldn't generate a response.";
+
+    if (modelProvider === 'gemini') {
+      // Gemini Logic
+      // For multi-turn chat, we should ideally construct the history in Gemini format
+      // Gemini roles: 'user' and 'model'
+      const geminiHistory = recentHistory.map(entry => ({
+        role: entry.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: entry.message }]
+      }));
+
+      const chat = geminiModel.startChat({
+        history: [
+          {
+            role: "user",
+            parts: [{ text: SYSTEM_PROMPT.replace("You are InfoGenius AI", "You are InfoGenius AI (powered by Gemini)") }]
+          },
+          {
+            role: "model",
+            parts: [{ text: "Understood. I am InfoGenius AI, ready to help." }]
+          },
+          ...geminiHistory
+        ],
+        generationConfig: {
+          maxOutputTokens: 2000,
+        },
+      });
+
+      const result = await chat.sendMessage(userMessage);
+      const response = await result.response;
+      botResponse = response.text();
+    } else {
+      // OpenAI Logic
+      // Using GPT-3.5 Turbo for cost-effective responses
+      const response = await openai.chat.completions.create({
+        model: "gpt-3.5-turbo",
+        messages,
+        temperature: 0.2,
+        max_tokens: 2000,
+        top_p: 1,
+        frequency_penalty: 0.5,
+        presence_penalty: 0,
+      });
+      botResponse = response?.choices?.[0]?.message?.content || "Sorry, I couldn't generate a response.";
+    }
+
+    // botResponse already set above
 
     // Persist assistant message (MongoDB or in-memory)
     if (mongoConnected && client) {
@@ -181,7 +224,7 @@ app.post('/', async (req, res) => {
         // Fall through to in-memory
       }
     }
-    
+
     // Always update in-memory history as backup
     const sessionHistory = getSessionHistory(sessionId);
     sessionHistory.push({ role: 'assistant', message: botResponse, ts: Date.now() });

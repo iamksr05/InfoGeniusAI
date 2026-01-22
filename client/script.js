@@ -18,7 +18,7 @@ function getAILogoPath() {
       // Continue to other strategies
     }
   }
-  
+
   // Strategy 2: If we're in a subdirectory like /client/, use absolute path
   const pathname = window.location.pathname;
   if (pathname.includes('/client/')) {
@@ -26,11 +26,11 @@ function getAILogoPath() {
     console.log('AI Logo path (subdirectory):', absolutePath);
     return absolutePath;
   }
-  
+
   // Strategy 3: Try to get from script location (most reliable)
   const scripts = Array.from(document.getElementsByTagName('script'));
   const moduleScript = scripts.find(s => s.type === 'module' && s.src);
-  
+
   if (moduleScript && moduleScript.src) {
     try {
       const scriptURL = new URL(moduleScript.src, window.location.href);
@@ -42,10 +42,10 @@ function getAILogoPath() {
       console.warn('Error resolving script path:', e);
     }
   }
-  
+
   // Strategy 4: Use relative path from current page
-  const currentDir = pathname.endsWith('/') 
-    ? pathname 
+  const currentDir = pathname.endsWith('/')
+    ? pathname
     : pathname.substring(0, pathname.lastIndexOf('/') + 1);
   const relativePath = currentDir + 'AI_logo.png';
   console.log('AI Logo path (relative):', relativePath);
@@ -84,21 +84,21 @@ function loader(element) {
 function formatCodeBlocks(text) {
   // Match code blocks with ```language or ```
   const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
-  
+
   return text.replace(codeBlockRegex, (match, lang, code) => {
     const language = lang || 'text';
     const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const escapedCode = escapeHtml(code.trim());
     return '<div class="code-block-container">' +
-           '<div class="code-header">' +
-           '<span class="code-language">' + language + '</span>' +
-           '<button class="copy-code-btn" data-code-id="' + codeId + '" title="Copy code">' +
-           '<span class="material-icons-round copy-icon">content_copy</span>' +
-           '<span class="copy-text">Copy</span>' +
-           '</button>' +
-           '</div>' +
-           '<pre class="code-block"><code id="' + codeId + '" class="language-' + language + '">' + escapedCode + '</code></pre>' +
-           '</div>';
+      '<div class="code-header">' +
+      '<span class="code-language">' + language + '</span>' +
+      '<button class="copy-code-btn" data-code-id="' + codeId + '" title="Copy code">' +
+      '<span class="material-icons-round copy-icon">content_copy</span>' +
+      '<span class="copy-text">Copy</span>' +
+      '</button>' +
+      '</div>' +
+      '<pre class="code-block"><code id="' + codeId + '" class="language-' + language + '">' + escapedCode + '</code></pre>' +
+      '</div>';
   });
 }
 
@@ -140,32 +140,32 @@ function formatLinks(text) {
 // Function to process and format the message content
 function processMessageContent(text) {
   let processed = text;
-  
+
   // First, format code blocks (before inline code to avoid conflicts)
   processed = formatCodeBlocks(processed);
-  
+
   // Then format inline code
   processed = formatInlineCode(processed);
-  
+
   // Format links
   processed = formatLinks(processed);
-  
+
   // Convert line breaks to <br>
-  processed = processed.replace(/(?![^<]*<\/pre>)\n/g, '<br>');  
+  processed = processed.replace(/(?![^<]*<\/pre>)\n/g, '<br>');
   return processed;
 }
 
 // Function to simulate typing animation for bot responses
 function typeText(element, text) {
   element.innerHTML = ""; // Clear the content before typing
-  
+
   // Split text by code blocks
   const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
   const parts = [];
   let lastIndex = 0;
   let match;
   const codeBlocks = [];
-  
+
   // Find all code blocks
   while ((match = codeBlockRegex.exec(text)) !== null) {
     codeBlocks.push({
@@ -175,7 +175,7 @@ function typeText(element, text) {
       code: match[2]
     });
   }
-  
+
   // Build parts array
   if (codeBlocks.length === 0) {
     parts.push({ type: 'text', content: text });
@@ -191,11 +191,11 @@ function typeText(element, text) {
       parts.push({ type: 'text', content: text.substring(lastIndex) });
     }
   }
-  
+
   // Render with typing animation
   let charCount = 0;
   const typingSpeed = 8;
-  
+
   parts.forEach((part) => {
     if (part.type === 'code') {
       // Code blocks appear instantly
@@ -203,16 +203,16 @@ function typeText(element, text) {
       const escapedCode = escapeHtml(part.code);
       const codeBlockHTML =
         '<div class="code-block-container">' +
-          '<div class="code-header">' +
-            '<span class="code-language" style="padding: 8px;">' + part.language + '</span>' +
-            '<button class="copy-code-btn" data-code-id="' + codeId + '" title="Copy code">' +
-              '<span class="material-icons-round copy-icon">content_copy</span>' +
-              '<span class="copy-text">Copy</span>' +
-            '</button>' +
-          '</div>' +
-          '<pre class="code-block"><code style="padding: 6px 16px;" id="' + codeId + '" class="language-' + part.language + '">' +
-            escapedCode +
-          '</code></pre>' +
+        '<div class="code-header">' +
+        '<span class="code-language" style="padding: 8px;">' + part.language + '</span>' +
+        '<button class="copy-code-btn" data-code-id="' + codeId + '" title="Copy code">' +
+        '<span class="material-icons-round copy-icon">content_copy</span>' +
+        '<span class="copy-text">Copy</span>' +
+        '</button>' +
+        '</div>' +
+        '<pre class="code-block"><code style="padding: 6px 16px;" id="' + codeId + '" class="language-' + part.language + '">' +
+        escapedCode +
+        '</code></pre>' +
         '</div>';
       setTimeout(() => {
         const tempDiv = document.createElement('div');
@@ -225,10 +225,10 @@ function typeText(element, text) {
       let processedText = formatInlineCode(part.content);
       processedText = formatLinks(processedText);
       processedText = processedText.replace(/(?![^<]*<\/pre>)\n/g, '<br>');
-      
+
       const tempElement = document.createElement("div");
       tempElement.innerHTML = processedText;
-      
+
       const processNode = (node) => {
         if (node.nodeType === Node.TEXT_NODE) {
           const text = node.textContent;
@@ -237,7 +237,7 @@ function typeText(element, text) {
             span.textContent = text[j];
             span.style.display = "none";
             element.appendChild(span);
-            
+
             setTimeout(() => {
               span.style.display = "inline";
             }, charCount * typingSpeed);
@@ -251,25 +251,25 @@ function typeText(element, text) {
           }
           clonedNode.style.display = "none";
           element.appendChild(clonedNode);
-          
+
           const displayTime = charCount * typingSpeed;
           // Process children
           Array.from(node.childNodes).forEach(child => {
             processNode(child);
           });
-          
+
           setTimeout(() => {
             clonedNode.style.display = "";
           }, displayTime);
         }
       };
-      
+
       Array.from(tempElement.childNodes).forEach(node => {
         processNode(node);
       });
     }
   });
-  
+
   // Finalize: MathJax and copy buttons
   setTimeout(() => {
     attachCopyButtons(element);
@@ -286,7 +286,7 @@ function attachCopyButtons(container) {
     // Remove existing listeners by cloning
     const newButton = button.cloneNode(true);
     button.parentNode.replaceChild(newButton, button);
-    
+
     newButton.addEventListener('click', async () => {
       const codeId = newButton.getAttribute('data-code-id');
       const codeElement = document.getElementById(codeId);
@@ -300,7 +300,7 @@ function attachCopyButtons(container) {
           copyIcon.textContent = 'check';
           copyText.textContent = 'Copied!';
           newButton.classList.add('copied');
-          
+
           setTimeout(() => {
             copyIcon.textContent = 'content_copy';
             copyText.textContent = 'Copy';
@@ -315,7 +315,7 @@ function attachCopyButtons(container) {
           textArea.select();
           document.execCommand('copy');
           document.body.removeChild(textArea);
-          
+
           const copyText = newButton.querySelector('.copy-text');
           copyText.textContent = 'Copied!';
           setTimeout(() => {
@@ -341,19 +341,19 @@ function chatStripe(isAi, value, uniqueId) {
   // Resolve logo path at runtime to ensure it's correct
   const logoPath = isAi ? getAILogoPath() : user;
   // For AI logo, add error handling with fallback paths
-  const imgTag = isAi 
+  const imgTag = isAi
     ? `<img src="${logoPath}" alt="bot" onerror="if(this.src!=='./AI_logo.png'){this.src='./AI_logo.png';}else if(this.src!=='AI_logo.png'){this.src='AI_logo.png';}else{console.error('Failed to load AI logo');}" />`
     : `<img src="${logoPath}" alt="user" />`;
   // NO NEWLINES, NO GHOST NODES
   return '<div class="wrapper ' + (isAi ? 'ai' : 'user') + '">' +
-           '<div class="chat">' +
-             '<div class="profile ' + (isAi ? 'ai-profile' : '') + '"' +
-               (isAi ? ' id="ai-profile-' + uniqueId + '"' : '') + '>' +
-               imgTag +
-             '</div>' +
-             '<div class="message" id="' + uniqueId + '">' + value + '</div>' +
-           '</div>' +
-         '</div>';
+    '<div class="chat">' +
+    '<div class="profile ' + (isAi ? 'ai-profile' : '') + '"' +
+    (isAi ? ' id="ai-profile-' + uniqueId + '"' : '') + '>' +
+    imgTag +
+    '</div>' +
+    '<div class="message" id="' + uniqueId + '">' + value + '</div>' +
+    '</div>' +
+    '</div>';
 }
 
 // Handle form submission and chat functionality
@@ -362,6 +362,8 @@ const handleSubmit = async (e) => {
 
   const data = new FormData(form);
   const prompt = data.get("prompt").trim(); // Trim any leading or trailing whitespace
+  const modelSelect = document.getElementById("model-select");
+  const selectedModel = modelSelect ? modelSelect.value : "openai";
 
   // Check if the message is empty, if so, do not submit
   if (!prompt) {
@@ -388,7 +390,7 @@ const handleSubmit = async (e) => {
 
   // User's chat stripe - use insertAdjacentHTML for better performance
   chatContainer.insertAdjacentHTML('beforeend', chatStripe(false, prompt));
-  
+
   // Force a reflow to ensure the element is rendered before continuing
   chatContainer.offsetHeight;
 
@@ -416,7 +418,7 @@ const handleSubmit = async (e) => {
   // Bot's chat stripe
   const uniqueId = generateUniqueId();
   chatContainer.insertAdjacentHTML('beforeend', chatStripe(true, " ", uniqueId));
-  
+
   // Force a reflow again
   chatContainer.offsetHeight;
 
@@ -429,13 +431,13 @@ const handleSubmit = async (e) => {
 
   // Specific message div for the bot response
   const messageDiv = document.getElementById(uniqueId);
-  
+
   // Function to get AI profile element (defined in outer scope for catch block)
   const getAIProfile = () => {
-    return document.getElementById(`ai-profile-${uniqueId}`) || 
-           messageDiv?.closest('.wrapper.ai')?.querySelector('.profile');
+    return document.getElementById(`ai-profile-${uniqueId}`) ||
+      messageDiv?.closest('.wrapper.ai')?.querySelector('.profile');
   };
-  
+
   // Get the AI profile element and add rotation animation
   const aiProfile = getAIProfile();
   if (aiProfile) {
@@ -467,13 +469,14 @@ const handleSubmit = async (e) => {
       body: JSON.stringify({
         prompt: prompt,
         sessionId: getSessionId(),
+        model: selectedModel,
       }),
     });
 
     // Clear the loading indicator
     clearInterval(loadInterval);
     messageDiv.innerHTML = "";
-    
+
     // Stop the AI logo rotation animation
     const currentAIProfile = getAIProfile();
     if (currentAIProfile) {
@@ -502,20 +505,20 @@ const handleSubmit = async (e) => {
   } catch (error) {
     // Handle errors such as network issues
     clearInterval(loadInterval);
-    
+
     // Stop the AI logo rotation animation on error
     const currentAIProfile = getAIProfile();
     if (currentAIProfile) {
       currentAIProfile.classList.remove("thinking");
     }
-    
+
     // Show user-friendly error message
     if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
       messageDiv.innerHTML = "Network error: Please check your internet connection and try again.";
     } else {
       messageDiv.innerHTML = "Sorry, there was an error processing your request. Please try again.";
     }
-    
+
     console.error('Error:', error);
   }
 };
@@ -524,16 +527,16 @@ const handleSubmit = async (e) => {
 function autoExpandTextarea(textarea) {
   // Reset height to auto to get the correct scrollHeight
   textarea.style.height = 'auto';
-  
+
   // Calculate the new height based on scrollHeight
   const scrollHeight = textarea.scrollHeight;
   const minHeight = 44; // Minimum height in pixels
   const maxHeight = 200; // Maximum height in pixels
-  
+
   // Set the height, clamping between min and max
   const newHeight = Math.min(Math.max(scrollHeight, minHeight), maxHeight);
   textarea.style.height = newHeight + 'px';
-  
+
   // If content exceeds max height, show scrollbar
   if (scrollHeight > maxHeight) {
     textarea.style.overflowY = 'auto';
@@ -548,7 +551,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (chatContainer) {
     chatContainer.innerHTML = '';
   }
-  
+
   // Show hero section on fresh page load
   const heroSection = document.getElementById("hero-section");
   if (heroSection) {

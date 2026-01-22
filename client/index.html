@@ -26,7 +26,13 @@
   <div id="app">
     <header id="header">
       <div class="app-title">InfoGenius AI</div>
-      <button class="icon-btn" id="theme-btn"><span class="material-icons-round">light_mode</span></button>
+      <div class="header-controls">
+        <select id="model-select" class="model-select">
+          <option value="openai">Default (OpenAI)</option>
+          <option value="gemini">Gemini (Google)</option>
+        </select>
+        <button class="icon-btn" id="theme-btn"><span class="material-icons-round">light_mode</span></button>
+      </div>
     </header>
 
     <div id="hero-section">
