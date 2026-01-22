@@ -1,260 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>InfoGenius AI | Smart Multipurpose Chatbot by Karan Ram</title>
-
-    <meta name="description" content="InfoGenius AI by Karan Ram is a secure, fast, and multipurpose AI assistant." />
-    <meta name="author" content="Karan Ram" />
-    <meta name="theme-color" content="#f54254" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <link rel="canonical" href="https://infogeniousai.onrender.com/" />
-
-    <!-- Open Graph -->
-    <meta property="og:title" content="InfoGenius AI" />
-    <meta property="og:description" content="Your multipurpose AI assistant developed by Karan Ram." />
-    <meta property="og:image" content="AI_logo.avif" />
-    <meta property="og:type" content="website" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="InfoGenius AI" />
-    <meta name="twitter:description" content="Try InfoGenius AI — smart, private, and fast chatbot." />
-    <meta name="twitter:image" content="AI_logo.avif" />
-
-    <link rel="icon" type="image/avif" sizes="300x250" href="AI_logo.avif" />
-    <link rel="manifest" href="manifest.json" />
-
-    <!-- Performance preconnect -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-
-    <!-- CSS -->
-    <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One" />
-    <link rel="stylesheet" href="assets/fonts/font-awesome.min.css" />
-    <link rel="stylesheet" href="assets/fonts/ionicons.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" />
-    <link rel="stylesheet" href="assets/css/styles.css" />
+    <meta name="description" content="InfoGenius AI by Karan Ram is a secure, fast, and multipurpose AI assistant.">
+    <meta name="author" content="Karan Ram">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="canonical" href="https://infogeniousai.onrender.com/">
+    <meta property="og:title" content="InfoGenius AI">
+    <meta property="og:description" content="Your multipurpose AI assistant developed by Karan Ram.">
+    <meta property="og:image" content="AI_logo.avif">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="InfoGenius AI">
+    <meta name="twitter:description" content="Try InfoGenius AI — smart, private, and fast chatbot.">
+    <meta name="twitter:image" content="AI_logo.avif">
+    <link rel="icon" type="image/avif" sizes="300x250" href="AI_logo.avif">
+    <link rel="manifest" href="manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css">
 </head>
-
-
-<body style="background-color: var(--background);">
-    <div id="top" style="height: 12px;">
-        <nav class="navbar navbar-light navbar-expand fixed-top"
-            style="color: var(--main-color);border-top-width: 6px;border-top-style: solid;background: var(--background);">
-            <div class="container-fluid"><img class="rounded-circle" style="margin: 2px" src="AI_logo.avif" width="35"
-                    height="35" alt="InfoGenius AI logo" loading="lazy" /><a class="navbar-brand" href="#" role="main"
-                    style="color: 4852EF; margin: 1px;"><b>InfoGenius AI</b></a><button data-toggle="collapse"
-                    class="navbar-toggler" data-target="#navcol-1"><span class="sr-only">Toggle navigation</span><span
-                        class="navbar-toggler-icon"></span></button>
-
-                <div class="collapse navbar-collapse" id="navcol-1">
-                    <ul class="nav navbar-nav">
-
-                        <li class="nav-item"><a class="nav-link active smoothScroll" href="#feature"
-                                style="color: var(--text-color);"> Features</a></li>
-                        <li class="nav-item"><a class="nav-link smoothScroll" href="#commands"
-                                style="color: var(--text-color);">Insights</a></li>
-                        <!--<li class="nav-item"><a class="nav-link 
-                          smoothScroll" href="#top" ; style="color:var(--text-color);"><strong>&#8593;</strong></a>
-                        </li>-->
-
-                    </ul>
+<body>
+    <div class="cursor-glow"></div>
+    
+    <nav class="nav">
+        <div class="nav-wrapper">
+            <a href="#" class="nav-logo-link">
+                <div class="nav-logo-container">
+                    <img src="AI_logo.avif" alt="InfoGenius AI" class="nav-logo-img">
+                    <span class="nav-logo-text">InfoGenius</span>
                 </div>
+            </a>
+            <div class="nav-menu">
+                <a href="#capabilities" class="nav-item">Capabilities</a>
+                <a href="#insights" class="nav-item">Insights</a>
+                <a href="https://infogeniusai.vercel.app/" class="nav-item nav-cta-btn">
+                    <span>Launch</span>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M6 3L11 8L6 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </a>
             </div>
-        </nav>
-    </div>
-    <header class="d-xl-flex flex-column justify-content-xl-center align-items-xl-center"
-        style="height: 418px;text-align: center;margin: 55px;"> <img class="rounded-circle partner" src="AI_logo.avif"
-            width="150" height="150" alt="InfoGenius AI" loading="lazy" style="margin-top: 30px;" />
-        <h1 class="d-xl-flex justify-content-xl-start" style="color: var(--text-color);">InfoGenius AI</h1>
-        <p style="color: var(--secondary-text-color);">An AI that does everything!</p>
-        <div class="tada animated">
-            <div role="group" class="btn-group">
-                <a href="https://infogeniusai.vercel.app/" class="btn btn-primary shadow-none"
-                    type="button"
-                    style="margin: 1px;background-color: #027BFF ;border-color: #027BFF ;border-radius: 7px;"><strong>&#8599</strong>
-                    Try InfoGenius AI</a>
-            </div>
+            <button class="nav-mobile-toggle">
+                <span></span>
+                <span></span>
+            </button>
         </div>
-    </header>
-    <div id="feature" style="height: 90px;background: var(--secondary);">
-        <div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-                <path fill="var(--background)" fill-opacity="1"
-                    d="M0,96L40,112C80,128,160,160,240,144C320,128,400,64,480,48C560,32,640,64,720,69.3C800,75,880,53,960,58.7C1040,64,1120,96,1200,96C1280,96,1360,64,1400,48L1440,32L1440,0L1400,0C1360,0,1280,0,1200,0C1120,0,1040,0,960,0C880,0,800,0,720,0C640,0,560,0,480,0C400,0,320,0,240,0C160,0,80,0,40,0L0,0Z">
-                </path>
-            </svg></div>
-    </div>
-    <div class="features-boxed" style="background: var(--secondary);">
-        <div class="container" style="color: var(--main-color);">
-            <div class="intro">
-                <h2 class="text-center" style="color: var(--text-color);">Features of AI</h2>
+    </nav>
+
+    <main>
+        <section class="intro">
+            <div class="intro-background">
+                <div class="grid-pattern"></div>
+                <div class="gradient-orb orb-1"></div>
+                <div class="gradient-orb orb-2"></div>
             </div>
-            <div class="row justify-content-center features">
-                <div class="col-sm-6 col-md-5 col-lg-4 item">
-                    <div id="features" class="box" style="border-radius: 34px;"><i class="fa fa-bolt icon"
-                            style="color: var(--main-color);"></i>
-                        <h3 class="name">Fast</h3>
-                        <p class="description" style="color: var(--secondary-text-color);">Receive a reply to your
-                            command in just a second!<br></p>
-                    </div>
+            <div class="intro-content">
+                <div class="intro-logo-container">
+                    <img src="AI_logo.avif" alt="InfoGenius AI" class="intro-logo">
+                    <div class="logo-ring"></div>
                 </div>
-                <div class="col-sm-6 col-md-5 col-lg-4 item">
-                    <div id="features" class="box"><i class="fa fa-lock icon" style="color: var(--main-color);"></i>
-                        <h3 class="name">Secure</h3>
-                        <p class="description" style="color: var(--secondary-text-color);">The most secure and private
-                            AI that maintains your privacy.<br></p>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-5 col-lg-4 item">
-                    <div id="features" class="box"><i class="fa fa-smile-o icon" style="color: var(--main-color);"></i>
-                        <h3 class="name">Happy Users</h3>
-                        <p class="description" style="color: var(--secondary-text-color);">Many users are enjoying the
-                            features of this AI.<br></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div></div>
-    </div>
-    <div style="background-color: var(--background);">
-        <div style="height: 150px; overflow: hidden;"><svg viewBox="0 0 500 150" preserveAspectRatio="none"
-                style="height: 100%; width: 100%;">
-                <path d="M-41.53,-9.56 C167.83,173.98 302.14,-60.89 534.09,89.10 L500.00,0.00 L0.00,0.00 Z"
-                    style="stroke: none; fill: var(--secondary);"></path>
-            </svg></div>
-    </div>
-    <div id="commands">
-        <section>
-            <div class="container-fluid text-white">
-                <div class="row row-cols-3 justify-content-center" style="color: var(--secondary-text-color);">
-                    <div class="col-auto col-md-6 col-lg-4 text-center pb-5 pt-5 number-item love_counter">
-                        <h1 class="love_count" style="font-size: 70px;"><strong>2</strong></h1>
-                        <h4 style="color: var(--main-color);margin-top: -6px;">Total Servers</h4>
-                    </div>
-                    <div class="col-auto col-lg-4 text-center align-self-center pb-5 pt-5 love_counter">
-                        <h1 class="love_count" style="font-size: 70px;"><strong>6</strong></h1>
-                        <h4 style="color: var(--main-color);margin-top: -6px;">Total Users</h4>
-                    </div>
+                <h1 class="intro-title">
+                    <span class="title-line">InfoGenius</span>
+                    <span class="title-line title-accent">AI</span>
+                </h1>
+                <p class="intro-tagline">Your intelligent companion for everything</p>
+                <p class="intro-description">
+                    From complex coding challenges to creative writing, problem-solving to business insights. 
+                    Fast, secure, and always learning.
+                </p>
+                <div class="intro-actions">
+                    <a href="https://infogeniusai.vercel.app/" class="btn-primary">
+                        <span>Start Chatting</span>
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                            <path d="M5 4L13 9L5 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </a>
+                    <a href="#capabilities" class="btn-secondary">Explore Features</a>
                 </div>
             </div>
         </section>
-        <div class="container">
-            <h2>Insights</h2>
-            <div class="accordion">
 
-                <div class="accordion-item">
-                    <button id="accordion-button-1" aria-expanded="false"><span class="accordion-title">What can
-                            InfoGenius AI do?</span><span class="icon" aria-hidden="true"></span></button>
-                    <div class="accordion-content" style="color: var(--main-color)">
-                        <p>
-                            <b>Welcome to Infogenius: Your Ultimate AI Companion</b><br>Discover the extraordinary
-                            features of Infogenius that make it the perfect AI assistant for your every
-                            need:<br><br><br>
-
-
-                            <b>1. Visual Brilliance:</b><br> Need visual information? Infogenius delivers! When asked
-                            for image-based outputs, it provides direct image hyperlinks, ensuring you have access to
-                            the visual content you desire instantly.<br><br>
-
-                            <b>2. Empowering Housewives:</b><br>Infogenius transforms daily tasks for housewives,
-                            offering seamless assistance in managing household chores, schedules, and more. From recipe
-                            suggestions to organizing grocery lists, it's your reliable home assistant.
-                            <br><br>
-
-                            <b>3. Exceptional Business Support:</b><br> Elevate your business with Infogenius! It serves
-                            as
-                            an intelligent chatbot on your website, offering customer service with a targeted and
-                            business-oriented database. Engage customers effectively, enhance their experience, and
-                            boost your sales effortlessly. <br><br>
-
-                            <b>4. Your Emotional Companion:</b><br>Infogenius goes beyond just functionality; it becomes
-                            your emotional confidant. It keeps track of your conversations, reminding you of cherished
-                            moments based on your current mood. Experience a truly personalized and empathetic
-                            interaction.<br><br>
-
-                            <b>5. Creative Writing:</b><br>Whether you need help with a story, poem, or any creative
-                            endeavor, InfoGenius AI can offer suggestions, brainstorm ideas, and even generate
-                            content for you. <br><br>
-
-                            <b>6. Multilingual Marvel:</b><br> Language is no barrier for Infogenius. It not only
-                            translates languages flawlessly but also engages in conversations across various languages.
-                            Its linguistic prowess expands continuously, currently embracing languages like Marathi. The
-                            more you interact, the smarter it becomes.<br><br>
-
-                            <b>7. Infinite Learning:</b><br> nfogenius is constantly evolving. It learns and adapts,
-                            growing smarter with every interaction. Whether you seek information, companionship, or
-                            business support, Infogenius is always ahead, providing unparalleled assistance. <br> <br>
-
-                            <b>8. Intuitive Problem Solving:</b><br> Infogenius excels at solving complex problems.
-                            Whether
-                            it's academic queries, business challenges, or everyday dilemmas, it offers insightful
-                            solutions, ensuring you're equipped with the knowledge you need to succeed. <br><br>
-
-
-                            <b>Embrace the future with Infogenius. Experience the seamless blend of technology and
-                                empathy, tailored to enrich your life and business endeavors. Welcome to a new era of
-                                intelligent assistance!</b>
-                        </p>
-                    </div>
+        <section id="capabilities" class="capabilities">
+            <div class="section-container">
+                <div class="section-label">What It Does</div>
+                <h2 class="section-heading">Capabilities</h2>
+                <div class="capabilities-grid">
+                    <article class="capability-card card-1">
+                        <div class="card-number">01</div>
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                                </svg>
+                            </div>
+                            <h3 class="card-title">Lightning Fast</h3>
+                            <p class="card-text">Instant responses powered by advanced AI. Get answers in milliseconds, not minutes.</p>
+                        </div>
+                    </article>
+                    <article class="capability-card card-2">
+                        <div class="card-number">02</div>
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect x="3" y="11" width="18" height="11" rx="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </div>
+                            <h3 class="card-title">Secure & Private</h3>
+                            <p class="card-text">Your conversations stay confidential. Enterprise-grade security for peace of mind.</p>
+                        </div>
+                    </article>
+                    <article class="capability-card card-3">
+                        <div class="card-number">03</div>
+                        <div class="card-content">
+                            <div class="card-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M12 2v4m0 12v4M5.64 5.64l2.83 2.83m7.06 7.06l2.83 2.83M2 12h4m12 0h4M5.64 18.36l2.83-2.83m7.06-7.06l2.83-2.83"/>
+                                </svg>
+                            </div>
+                            <h3 class="card-title">Always Learning</h3>
+                            <p class="card-text">Gets smarter with every interaction. Adapts to your needs and preferences.</p>
+                        </div>
+                    </article>
                 </div>
+            </div>
+        </section>
 
-
-                <div class="accordion-item">
-                    <button id="accordion-button-3" aria-expanded="false"><span
-                            class="accordion-title">About</span><span class="icon" aria-hidden="true"></span></button>
-                    <div class="accordion-content" style="color: var(--main-color)">
-                        <!--<p><b>AI Developer: Karan Ram </b></p>-->
-                        <p><b> AI Name: InfoGenius AI </b></p>
-                        <p><b> AI Type: Multipurpose AI Chatbot </b></p>
-                        <p><b> Version: 1.8.4 </b></p>
-                        <p><b> Developed by: Karan Ram </b></p>
-                    </div>
+        <section id="insights" class="insights-section">
+            <div class="section-container">
+                <div class="section-label">Learn More</div>
+                <h2 class="section-heading">Insights</h2>
+                <div class="insights-list">
+                    <details class="insight-item">
+                        <summary class="insight-summary">
+                            <span class="insight-title">What can InfoGenius AI do?</span>
+                            <span class="insight-toggle"></span>
+                        </summary>
+                        <div class="insight-content">
+                            <div class="insight-body">
+                                <h4>Your Ultimate AI Companion</h4>
+                                <p>InfoGenius AI is designed to be your all-in-one intelligent assistant, capable of handling diverse tasks with precision and creativity.</p>
+                                
+                                <div class="feature-list">
+                                    <div class="feature-item">
+                                        <strong>Visual Intelligence</strong>
+                                        <p>Provides direct image hyperlinks and visual content when requested, ensuring instant access to visual information.</p>
+                                    </div>
+                                    
+                                    <div class="feature-item">
+                                        <strong>Home Assistant</strong>
+                                        <p>Helps manage household tasks, recipes, grocery lists, and daily schedules with ease.</p>
+                                    </div>
+                                    
+                                    <div class="feature-item">
+                                        <strong>Business Support</strong>
+                                        <p>Serves as an intelligent chatbot for customer service, engaging customers and boosting sales.</p>
+                                    </div>
+                                    
+                                    <div class="feature-item">
+                                        <strong>Emotional Companion</strong>
+                                        <p>Remembers conversations and provides personalized, empathetic interactions based on your mood.</p>
+                                    </div>
+                                    
+                                    <div class="feature-item">
+                                        <strong>Creative Writing</strong>
+                                        <p>Assists with stories, poems, and creative content generation with suggestions and brainstorming.</p>
+                                    </div>
+                                    
+                                    <div class="feature-item">
+                                        <strong>Multilingual</strong>
+                                        <p>Translates and converses in multiple languages, continuously expanding its linguistic capabilities.</p>
+                                    </div>
+                                    
+                                    <div class="feature-item">
+                                        <strong>Continuous Learning</strong>
+                                        <p>Evolves and adapts with every interaction, growing smarter and more helpful over time.</p>
+                                    </div>
+                                    
+                                    <div class="feature-item">
+                                        <strong>Problem Solving</strong>
+                                        <p>Excels at solving complex problems across academic, business, and everyday scenarios.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+                    
+                    <details class="insight-item">
+                        <summary class="insight-summary">
+                            <span class="insight-title">About</span>
+                            <span class="insight-toggle"></span>
+                        </summary>
+                        <div class="insight-content">
+                            <div class="insight-body">
+                                <div class="about-grid">
+                                    <div class="about-item">
+                                        <span class="about-label">AI Name</span>
+                                        <span class="about-value">InfoGenius AI</span>
+                                    </div>
+                                    <div class="about-item">
+                                        <span class="about-label">Type</span>
+                                        <span class="about-value">Multipurpose AI Chatbot</span>
+                                    </div>
+                                    <div class="about-item">
+                                        <span class="about-label">Version</span>
+                                        <span class="about-value">1.8.4</span>
+                                    </div>
+                                    <div class="about-item">
+                                        <span class="about-label">Developer</span>
+                                        <span class="about-value">Karan Ram</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </details>
                 </div>
-
             </div>
-        </div>
-    </div>
-    </div>
+        </section>
+    </main>
 
-    <div id="feature" style="height: 90px;background: var(--secondary);">
-        <div><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
-                <path fill="var(--background)" fill-opacity="1"
-                    d="M0,96L40,112C80,128,160,160,240,144C320,128,400,64,480,48C560,32,640,64,720,69.3C800,75,880,53,960,58.7C1040,64,1120,96,1200,96C1280,96,1360,64,1400,48L1440,32L1440,0L1400,0C1360,0,1280,0,1200,0C1120,0,1040,0,960,0C880,0,800,0,720,0C640,0,560,0,480,0C400,0,320,0,240,0C160,0,80,0,40,0L0,0Z">
-                </path>
-            </svg></div>
-    </div>
-    <div class="footer-dark" style="background: var(--secondary);padding-top: 0px;padding-bottom: 0px;">
-        <div class="container">
-            <div class="row">
-                <div class="col item social"><a class="smoothScroll" href="#top"><i
-                            class="icon ion-android-arrow-up"></i></a></div>
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-main">
+                <div class="footer-brand">
+                    <img src="AI_logo.avif" alt="InfoGenius AI" class="footer-logo">
+                    <span class="footer-brand-text">InfoGenius AI</span>
+                </div>
+                <p class="footer-copyright">© 2025 InfoGenius AI. All rights reserved.</p>
+                <p class="footer-credit">Created by <a href="#" class="footer-link">Karan Ram</a></p>
             </div>
-            <p class="copyright" style="color: var(--text-color);">InfoGenius AI © 2025</p>
-            <p class="copyright" style="color: var(--text-color);padding: 0px;">
-
-                Theme by&nbsp;<a href="#" style="color: #060239;">Karan Ram</a>
-            </p>
+            <a href="#" class="footer-scroll-top">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10 15V5M5 10l5-5 5 5"/>
+                </svg>
+            </a>
         </div>
-    </div>
-    <!-- <script>  if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function () {
-                navigator.serviceWorker.register('/service-worker.js').then(function (registration) {
-                    console.log('Service Worker registered with scope:', registration.scope);
-                }).catch(function (error) {
-                    console.log('Service Worker registration failed:', error);
+    </footer>
+
+    <script>
+        document.querySelectorAll('.insight-summary').forEach(summary => {
+            summary.addEventListener('click', function(e) {
+                e.preventDefault();
+                const details = this.parentElement;
+                const isOpen = details.hasAttribute('open');
+                
+                document.querySelectorAll('.insight-item').forEach(item => {
+                    if (item !== details) {
+                        item.removeAttribute('open');
+                    }
                 });
+                
+                if (!isOpen) {
+                    details.setAttribute('open', '');
+                } else {
+                    details.removeAttribute('open');
+                }
             });
-        }
-    </script> -->
-    <script src="assets/js/jquery.min.js"></script>
-    <script src="assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/js/Counting.js"></script>
-    <script src="assets/js/untitled.js"></script>
-</body>
+        });
 
+        const navToggle = document.querySelector('.nav-mobile-toggle');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        navToggle?.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            navToggle.classList.toggle('active');
+        });
+
+        const cursorGlow = document.querySelector('.cursor-glow');
+        document.addEventListener('mousemove', (e) => {
+            cursorGlow.style.left = e.clientX + 'px';
+            cursorGlow.style.top = e.clientY + 'px';
+        });
+
+        const nav = document.querySelector('.nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        const statValues = document.querySelectorAll('.stat-value[data-count]');
+        const observerOptions = { threshold: 0.5 };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.dataset.animated) {
+                    entry.target.dataset.animated = 'true';
+                    const target = parseInt(entry.target.dataset.count);
+                    let current = 0;
+                    const increment = target / 40;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            entry.target.textContent = target;
+                            clearInterval(timer);
+                        } else {
+                            entry.target.textContent = Math.floor(current);
+                        }
+                    }, 25);
+                }
+            });
+        }, observerOptions);
+
+        statValues.forEach(stat => observer.observe(stat));
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) {
+                    const offset = 80;
+                    const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+                    window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                }
+            });
+        });
+
+        document.querySelector('.footer-scroll-top')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+</body>
 </html>

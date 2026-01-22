@@ -4,7 +4,9 @@
   "description": "My first Artificial Intelligence",
   "type": "module",
   "scripts": {
-    "server": "nodemon server.js"
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "dev": "nodemon server.js"
   },
   "author": "Karan Ram",
   "license": "ISC",

@@ -1,47 +1,44 @@
 <head>
   <meta charset="UTF-8" />
   <title>InfoGenius AI</title>
-
-  <!-- Meta -->
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#050509" />
   <link rel="shortcut icon" href="AI_logo.png" type="image/x-icon">
-
-  <!-- Favicon & Manifest -->
   <link rel="manifest" href="/client/manifest.json" />
-
-  <!-- Styles -->
   <link rel="stylesheet" href="style.css" />
-  <!-- Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+  </script>
 </head>
 
 <body>
   <div id="app">
-    <!-- Header -->
     <header id="header">
       <div class="app-title">InfoGenius AI</div>
       <button class="icon-btn" id="theme-btn"><span class="material-icons-round">light_mode</span></button>
     </header>
 
-    <!-- Main Content / Hero -->
     <div id="hero-section">
       <img src="./AI_logo.png" class="hero-logo" alt="InfoGenius AI" />
       <h1 class="hero-title">How can I help you<br>today?</h1>
       <p class="hero-subtitle">Ask me anything or start a voice conversation</p>
     </div>
 
-    <!-- Chat Container (Overlay or integrated) -->
     <div id="chat_container"></div>
 
-    <!-- Input Area -->
     <div id="input-area">
-      <!-- Input Form -->
       <form>
         <textarea id="prompt" name="prompt" rows="1" cols="1" placeholder="Type your message..."></textarea>
-
         <button type="submit" id="sendButton">
           <span id="sendIcon" class="material-icons-round">arrow_upward</span>
         </button>
@@ -49,9 +46,7 @@
     </div>
   </div>
 
-  <!-- Theme Toggle & Logic Fixes -->
   <script>
-    // Theme Toggle Logic
     const themeBtn = document.getElementById('theme-btn');
     const themeIcon = themeBtn.querySelector('span');
     const body = document.body;
@@ -65,30 +60,25 @@
       }
     });
 
-    // Fix Enter key to submit form
     const promptField = document.getElementById('prompt');
     const sendBtn = document.getElementById('sendButton');
 
     promptField.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        e.stopPropagation(); // Prevent bubbling to script.js form listener
+        e.stopPropagation();
         sendBtn.click();
       }
     });
   </script>
 
-  <!-- Optional: Service Worker -->
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {
         navigator.serviceWorker
           .register("/service-worker.js")
           .then(function (registration) {
-            console.log(
-              "Service Worker registered with scope:",
-              registration.scope
-            );
+            console.log("Service Worker registered with scope:", registration.scope);
           })
           .catch(function (error) {
             console.log("Service Worker registration failed:", error);
@@ -97,6 +87,5 @@
     }
   </script>
 
-  <!-- JavaScript file -->
   <script type="module" src="script.js"></script>
 </body>

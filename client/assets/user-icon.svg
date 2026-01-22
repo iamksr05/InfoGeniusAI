@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+  <defs>
+    <linearGradient id="userGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- User head circle -->
+  <circle cx="18" cy="13" r="5.5" fill="url(#userGradient)"/>
+  
+  <!-- User body/shoulders - smooth curve -->
+  <path d="M 7 28 Q 7 22 18 22 Q 29 22 29 28 L 29 28.5 L 7 28.5 Z" 
+        fill="url(#userGradient)"/>
+  
+  <!-- Subtle shine effect on head -->
+  <ellipse cx="16.5" cy="11.5" rx="2" ry="1.5" fill="rgba(255,255,255,0.4)"/>
+</svg>

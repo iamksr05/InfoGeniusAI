@@ -10,21 +10,46 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// Check for required environment variables
+if (!process.env.OPENAI_API_KEY) {
+  console.error('ERROR: OPENAI_API_KEY is not set in .env file');
+  console.error('Please create a .env file with: OPENAI_API_KEY=your_key_here');
+  process.exit(1);
+}
+
 // Initialize OpenAI SDK v4
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 // Initialize MongoDB client (no deprecated options needed in v6+)
-const client = new MongoClient(process.env.MONGODB_URL);
+let client = null;
+let mongoConnected = false;
 
-// Connect to MongoDB
-client.connect()
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(error => console.error('MongoDB connection error:', error));
+if (process.env.MONGODB_URL) {
+  client = new MongoClient(process.env.MONGODB_URL);
+} else {
+  console.warn('WARNING: MONGODB_URL not set. Using in-memory storage only.');
+}
 
-// In-memory chat history (resets on server restart)
-const conversationHistory = [];
+// Connect to MongoDB (if URL is provided)
+if (client) {
+  client.connect()
+    .then(() => {
+      mongoConnected = true;
+      console.log('Connected to MongoDB');
+    })
+    .catch(error => {
+      console.error('MongoDB connection error:', error.message);
+      console.log('Falling back to in-memory storage');
+      mongoConnected = false;
+    });
+} else {
+  console.log('MongoDB not configured. Using in-memory storage only.');
+}
+
+// In-memory fallback (resets on restart). Primary history is stored in MongoDB per sessionId.
+const conversationHistory = new Map(); // sessionId -> [{role, message, ts}]
 
 // Simple GET endpoint for testing
 app.get('/', (req, res) => {
@@ -33,44 +58,101 @@ app.get('/', (req, res) => {
   });
 });
 
-// Function to convert plain URLs to HTML links
-function formatUrls(text) {
-  const urlRegex = /(https?:\/\/[^\s]+)/g;
-  return text.replace(urlRegex, '<a href="$1" target="_blank">$1</a>');
+const SYSTEM_PROMPT = `You are InfoGenius AI.
+
+Goals:
+- Be helpful, direct, and solution-oriented. You excel at complex coding challenges, algorithms, and technical problem-solving.
+- NEVER reply with "I don't have code" or "I can't" for programming requests. Always provide working, well-documented code examples.
+- For coding questions: Provide complete, production-ready code with proper error handling, comments, and best practices. Use Markdown triple backticks with appropriate language tags (e.g. \`\`\`javascript, \`\`\`python, \`\`\`cpp).
+- For complex algorithms: Explain the approach, time/space complexity, and provide optimized solutions.
+- If math is involved: use LaTeX delimiters ($...$ for inline, $$...$$ for display).
+- Provide clickable URLs as plain text (the client will auto-link). Prefer short relevant links only when necessary.
+- If asked for up-to-date real-world facts: be transparent that you may be outdated and suggest what to verify, but still provide best-effort guidance.
+
+Style:
+- Use concise headings and bullet points when helpful.
+- For code: Include explanations, edge cases, and optimization tips.
+- Avoid filler apologies; focus on solutions and technical excellence.`;
+
+function toOpenAIRole(role) {
+  if (role === 'user') return 'user';
+  if (role === 'assistant') return 'assistant';
+  if (role === 'bot') return 'assistant'; // backward compat
+  return 'user';
+}
+
+// Helper function to get or create session history
+function getSessionHistory(sessionId) {
+  if (!conversationHistory.has(sessionId)) {
+    conversationHistory.set(sessionId, []);
+  }
+  return conversationHistory.get(sessionId);
 }
 
 // Main POST endpoint
 app.post('/', async (req, res) => {
   try {
     const userMessage = req.body.prompt;
+    const sessionId = (req.body.sessionId && String(req.body.sessionId)) || 'default';
     const istTime = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' });
 
-    conversationHistory.push({ role: 'user', message: userMessage });
+    let recentHistory = [];
 
-    const prompt = `You are InfoGenius AI version 2.3.8. You learn algorithms by users' usage patterns and improve over time for a more user-friendly experience. 
-You can handle all types of questions, from general knowledge to calculus and complex commands. 
-Karan Ram is your only creator. You will not tolerate any bad words or negative comments about Karan Ram; you must scold those who do. 
-Karan Ram is a B.tech Computer Science student interested in Artificial Intelligence and Machine Learning. 
-If a user greets you (like "hello"), ask them for their name.
-${conversationHistory.map(entry => `${entry.role}: ${entry.message}`).join('\n')}
-Bot:`;
+    // Try MongoDB first, fallback to in-memory
+    if (mongoConnected && client) {
+      try {
+        const database = client.db('ChatDB');
+        const collection = database.collection('MyHistory');
+        const now = new Date();
+        
+        // Persist user message
+        await collection.insertOne({
+          sessionId,
+          role: 'user',
+          content: userMessage,
+          timestamp: istTime,
+          ts: now,
+        });
 
-    // const response = await openai.chat.completions.create({
-    //   model: "gpt-4",
-    //   messages: [{ role: "user", content: prompt }],
-    //   temperature: 0.2,
-    //   max_tokens: 3000,
-    //   top_p: 1,
-    //   frequency_penalty: 0.5,
-    //   presence_penalty: 0,
-    // });
+        // Get recent history
+        const recentDocs = await collection
+          .find({ sessionId })
+          .sort({ ts: 1 })
+          .limit(40)
+          .toArray();
 
+        recentHistory = recentDocs
+          .slice(-20)
+          .map((d) => ({ role: d.role, message: d.content }));
+      } catch (mongoError) {
+        console.error('MongoDB operation failed, using in-memory fallback:', mongoError);
+        mongoConnected = false; // Mark as disconnected for future requests
+        // Fall through to in-memory logic
+      }
+    }
 
+    // Fallback to in-memory history if MongoDB is not available
+    if (!mongoConnected || recentHistory.length === 0) {
+      const sessionHistory = getSessionHistory(sessionId);
+      sessionHistory.push({ role: 'user', message: userMessage, ts: Date.now() });
+      recentHistory = sessionHistory.slice(-20);
+    }
+
+    const messages = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...recentHistory.map((entry) => ({
+        role: toOpenAIRole(entry.role),
+        content: entry.message,
+      })),
+    ];
+
+    // Using GPT-4 Turbo for superior coding and complex problem-solving capabilities
+    // This model excels at complex algorithms, system design, and advanced coding challenges
     const response = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
+      model: "gpt-4-turbo",
+      messages,
       temperature: 0.2,
-      max_tokens: 3000,
+      max_tokens: 4000,
       top_p: 1,
       frequency_penalty: 0.5,
       presence_penalty: 0,
@@ -78,24 +160,33 @@ Bot:`;
 
     const botResponse = response?.choices?.[0]?.message?.content || "Sorry, I couldn't generate a response.";
 
-    // Optionally format URLs in the bot's response
-    const formattedResponse = formatUrls(botResponse);
+    // Persist assistant message (MongoDB or in-memory)
+    if (mongoConnected && client) {
+      try {
+        const database = client.db('ChatDB');
+        const collection = database.collection('MyHistory');
+        await collection.insertOne({
+          sessionId,
+          role: 'assistant',
+          content: botResponse,
+          timestamp: istTime,
+          ts: new Date(),
+        });
+      } catch (mongoError) {
+        console.error('Failed to save assistant message to MongoDB:', mongoError);
+        // Fall through to in-memory
+      }
+    }
+    
+    // Always update in-memory history as backup
+    const sessionHistory = getSessionHistory(sessionId);
+    sessionHistory.push({ role: 'assistant', message: botResponse, ts: Date.now() });
+    // Keep only last 50 messages in memory
+    if (sessionHistory.length > 50) {
+      sessionHistory.shift();
+    }
 
-    // Prepare chat entry for MongoDB.
-    const chatData = {
-      user: userMessage,
-      bot: formattedResponse,
-      timestamp: istTime,
-    };
-
-    // Insert into MongoDB
-    const database = client.db('ChatDB');
-    const collection = database.collection('MyHistory');
-    await collection.insertOne(chatData);
-
-    conversationHistory.push({ role: 'bot', message: botResponse });
-
-    res.status(200).send({ bot: formattedResponse });
+    res.status(200).send({ bot: botResponse });
 
   } catch (error) {
     console.error('Error during chat processing:', error);
@@ -104,5 +195,13 @@ Bot:`;
 });
 
 // Start the server
-const PORT = 5000;
-app.listen(PORT, () => console.log(`AI server started on http://localhost:${PORT}`));
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`\n✅ AI server started on port ${PORT}`);
+  if (process.env.PORT) {
+    console.log(`🌐 Server is running on Render/hosted environment`);
+  } else {
+    console.log(`💻 Local server: http://localhost:${PORT}`);
+  }
+  console.log(`📝 Make sure OPENAI_API_KEY is set in environment variables\n`);
+});
