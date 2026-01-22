@@ -64,12 +64,16 @@ const sendIcon = document.getElementById("sendIcon");
 let loadInterval;
 let lastRequestTime = 0; // Track the time of the last request
 
-// Generate a new session id on each page load to clear AI memory on refresh
+// Generate a session ID once per page load - maintains history during session, clears on refresh
+// This is generated once when the script loads, so all requests in the same page session use the same ID
+const currentSessionId = `sess_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+
 function getSessionId() {
-  // Always generate a new session ID on each page load
-  // This ensures the AI's memory is cleared after each refresh
-  const id = `sess_${Date.now()}_${Math.random().toString(16).slice(2)}`;
-  return id;
+  // Return the session ID generated at page load
+  // This ensures:
+  // - History is maintained during the current session (same ID for all requests)
+  // - Memory is cleared on page refresh (new ID generated on each page load)
+  return currentSessionId;
 }
 
 // Function to create the typing loader animation
@@ -85,13 +89,32 @@ function loader(element) {
 
 // Function to format code blocks with copy button
 function formatCodeBlocks(text) {
-  // Match code blocks with ```language or ```
-  const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+  // Match code blocks with ```language or ``` - improved regex
+  // Handles: ```language\ncode``` or ```\ncode``` or ```language code```
+  const codeBlockRegex = /```(\w+)?\s*\n([\s\S]*?)```/g;
 
   return text.replace(codeBlockRegex, (match, lang, code) => {
-    const language = lang || 'text';
+    const language = (lang || 'text').trim().toLowerCase();
     const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const escapedCode = escapeHtml(code.trim());
+    
+    // Only format if we have actual code content
+    if (code.trim().length === 0) {
+      return match; // Return original if empty
+    }
+    
+    // Split code into lines and process each line
+    const codeLines = code.trimEnd().split('\n');
+    const lineCount = codeLines.length;
+    
+    // Generate line numbers - one per line
+    let lineNumbersHTML = '';
+    for (let i = 1; i <= lineCount; i++) {
+      lineNumbersHTML += `<span class="line-number">${i}</span>\n`;
+    }
+    
+    // Escape each line separately
+    const escapedCode = codeLines.map(line => escapeHtml(line)).join('\n');
+    
     return '<div class="code-block-container">' +
       '<div class="code-header">' +
       '<span class="code-language">' + language + '</span>' +
@@ -100,7 +123,10 @@ function formatCodeBlocks(text) {
       '<span class="copy-text">Copy</span>' +
       '</button>' +
       '</div>' +
+      '<div class="code-wrapper">' +
+      '<div class="line-numbers" aria-hidden="true">' + lineNumbersHTML.trim() + '</div>' +
       '<pre class="code-block"><code id="' + codeId + '" class="language-' + language + '">' + escapedCode + '</code></pre>' +
+      '</div>' +
       '</div>';
   });
 }
@@ -110,6 +136,15 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+// Function to format user messages - preserve line breaks and escape HTML
+function formatUserMessage(text) {
+  if (!text) return '';
+  // Escape HTML to prevent XSS
+  const escaped = escapeHtml(text);
+  // Convert line breaks to <br> tags
+  return escaped.replace(/\n/g, '<br>');
 }
 
 // Function to format inline code
@@ -162,8 +197,9 @@ function processMessageContent(text) {
 function typeText(element, text) {
   element.innerHTML = ""; // Clear the content before typing
 
-  // Split text by code blocks
-  const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+  // Split text by code blocks - improved regex to handle various formats
+  // Matches: ```language\ncode``` or ```\ncode``` or ```language code```
+  const codeBlockRegex = /```(\w+)?\s*\n([\s\S]*?)```/g;
   const parts = [];
   let lastIndex = 0;
   let match;
@@ -171,12 +207,18 @@ function typeText(element, text) {
 
   // Find all code blocks
   while ((match = codeBlockRegex.exec(text)) !== null) {
-    codeBlocks.push({
-      start: match.index,
-      end: match.index + match[0].length,
-      language: match[1] || 'text',
-      code: match[2]
-    });
+    const language = (match[1] || 'text').trim().toLowerCase();
+    const code = match[2].trim();
+    
+    // Only add if we have actual code content
+    if (code.length > 0) {
+      codeBlocks.push({
+        start: match.index,
+        end: match.index + match[0].length,
+        language: language,
+        code: code
+      });
+    }
   }
 
   // Build parts array
@@ -203,7 +245,20 @@ function typeText(element, text) {
     if (part.type === 'code') {
       // Code blocks appear instantly
       const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      const escapedCode = escapeHtml(part.code);
+      
+      // Trim the code and split into lines
+      const codeLines = part.code.trimEnd().split('\n');
+      const lineCount = codeLines.length;
+      
+      // Generate line numbers - one per line
+      let lineNumbersHTML = '';
+      for (let i = 1; i <= lineCount; i++) {
+        lineNumbersHTML += `<span class="line-number">${i}</span>\n`;
+      }
+      
+      // Escape each line separately to preserve structure
+      const escapedCode = codeLines.map(line => escapeHtml(line)).join('\n');
+      
       const codeBlockHTML =
         '<div class="code-block-container">' +
         '<div class="code-header">' +
@@ -213,14 +268,34 @@ function typeText(element, text) {
         '<span class="copy-text">Copy</span>' +
         '</button>' +
         '</div>' +
+        '<div class="code-wrapper">' +
+        '<div class="line-numbers" aria-hidden="true">' + lineNumbersHTML.trim() + '</div>' +
         '<pre class="code-block"><code style="padding: 6px 16px;" id="' + codeId + '" class="language-' + part.language + '">' +
         escapedCode +
         '</code></pre>' +
+        '</div>' +
         '</div>';
       setTimeout(() => {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = codeBlockHTML;
-        element.appendChild(tempDiv.firstElementChild);
+        const codeBlockElement = tempDiv.firstElementChild;
+        element.appendChild(codeBlockElement);
+        
+        // Ensure line numbers align with code after rendering
+        setTimeout(() => {
+          const codeElement = document.getElementById(codeId);
+          const lineNumbersElement = codeBlockElement.querySelector('.line-numbers');
+          if (codeElement && lineNumbersElement) {
+            // Match heights to ensure alignment
+            const codeHeight = codeElement.offsetHeight;
+            const lineNumbersHeight = lineNumbersElement.offsetHeight;
+            if (Math.abs(codeHeight - lineNumbersHeight) > 2) {
+              // Adjust if heights don't match (accounting for padding differences)
+              lineNumbersElement.style.minHeight = codeHeight + 'px';
+            }
+          }
+        }, 10);
+        
         attachCopyButtons(element);
       }, charCount * typingSpeed);
     } else {
@@ -336,6 +411,10 @@ function chatStripe(isAi, value, uniqueId) {
   const imgTag = isAi
     ? `<img src="${logoPath}" alt="bot" onerror="if(this.src!=='./AI_logo.png'){this.src='./AI_logo.png';}else if(this.src!=='AI_logo.png'){this.src='AI_logo.png';}else{console.error('Failed to load AI logo');}" />`
     : `<img src="${logoPath}" alt="user" />`;
+  
+  // Format user messages to preserve line breaks, AI messages are already formatted
+  const formattedValue = isAi ? value : formatUserMessage(value);
+  
   // NO NEWLINES, NO GHOST NODES
   return '<div class="wrapper ' + (isAi ? 'ai' : 'user') + '">' +
     '<div class="chat">' +
@@ -343,7 +422,7 @@ function chatStripe(isAi, value, uniqueId) {
     (isAi ? ' id="ai-profile-' + uniqueId + '"' : '') + '>' +
     imgTag +
     '</div>' +
-    '<div class="message" id="' + uniqueId + '">' + value + '</div>' +
+    '<div class="message" id="' + uniqueId + '">' + formattedValue + '</div>' +
     '</div>' +
     '</div>';
 }
@@ -453,7 +532,7 @@ const handleSubmit = async (e) => {
 
   try {
     // Send the user's message to the backend for processing
-    const response = await fetch("http://localhost:5001", {
+    const response = await fetch(live, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -485,13 +564,22 @@ const handleSubmit = async (e) => {
     } else {
       const errorText = await response.text();
 
-      // If there's an error, display a message
-      if (errorText.includes("quota")) {
+      // Handle different error types with user-friendly messages
+      if (errorText.includes("QUOTA_EXCEEDED") || errorText.toLowerCase().includes("quota")) {
         messageDiv.innerHTML =
-          "Sorry for the inconvenience! The AI is temporarily unavailable. We are working to get things back up and running. Please try again shortly!";
+          "Sorry for the inconvenience! The AI is temporarily unavailable due to API quota limits. We are working to get things back up and running. Please try again shortly!";
+      } else if (errorText.includes("API_KEY_ERROR") || errorText.toLowerCase().includes("api key")) {
+        messageDiv.innerHTML =
+          "Configuration error: API key is invalid or missing. Please check the server configuration.";
+      } else if (response.status === 500) {
+        messageDiv.innerHTML =
+          "Server error occurred. Please try again. If the problem persists, check the server logs.";
+      } else if (response.status === 0 || !response.status) {
+        messageDiv.innerHTML =
+          "Network error: Unable to connect to the server. Please check your internet connection and ensure the server is running.";
       } else {
-        // Did not include "quota", so likely a server 500 error
-        messageDiv.innerHTML = `Error: ${errorText}`;
+        // Generic error message
+        messageDiv.innerHTML = `Error (${response.status}): ${errorText || 'An unexpected error occurred. Please try again.'}`;
       }
     }
   } catch (error) {
@@ -504,11 +592,15 @@ const handleSubmit = async (e) => {
       currentAIProfile.classList.remove("thinking");
     }
 
-    // Show user-friendly error message
-    if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-      messageDiv.innerHTML = "Network error: Please check your internet connection and try again.";
+    // Show user-friendly error message based on error type
+    const errorMessage = error.message || String(error);
+    
+    if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError') || errorMessage.includes('ERR_NETWORK')) {
+      messageDiv.innerHTML = "Network error: Unable to connect to the server. Please check:<br>• Your internet connection<br>• That the server is running on http://localhost:5001<br>• Your firewall settings";
+    } else if (errorMessage.includes('CORS')) {
+      messageDiv.innerHTML = "CORS error: The server may not be configured to accept requests from this origin.";
     } else {
-      messageDiv.innerHTML = "Sorry, there was an error processing your request. Please try again.";
+      messageDiv.innerHTML = `Error: ${errorMessage}<br><br>Please check the browser console for more details.`;
     }
 
     console.error('Error:', error);
