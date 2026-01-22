@@ -461,7 +461,7 @@ const handleSubmit = async (e) => {
 
   try {
     // Send the user's message to the backend for processing
-    const response = await fetch(live, {
+    const response = await fetch(dev, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -497,9 +497,9 @@ const handleSubmit = async (e) => {
       if (errorText.includes("quota")) {
         messageDiv.innerHTML =
           "Sorry for the inconvenience! The AI is temporarily unavailable. We are working to get things back up and running. Please try again shortly!";
-      } else {
-        messageDiv.innerHTML =
-          "Apologies, the website has been disabled by Karan Ram.";
+
+        // Did not include "quota", so likely a server 500 error
+        messageDiv.innerHTML = `Error: ${errorText}`;
       }
     }
   } catch (error) {
