@@ -41,14 +41,14 @@ if (!GEMINI_API_KEY) {
   console.warn('Using fallback API key (this may have quota limits)');
 }
 
-const genAI = new GoogleGenerativeAI(GEMINI_API_KEY || "AIzaSyDTEWV5c-oxyBYNqzmFhu7l0jb6ZuxwHzU");
+const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 const geminiModel = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
 // Log which API key is being used (first 10 chars for security)
 if (GEMINI_API_KEY) {
-  console.log(`✓ Using Gemini API key from environment: ${GEMINI_API_KEY.substring(0, 10)}...`);
+  console.log(`✓ Using API key from environment: ${GEMINI_API_KEY.substring(0, 10)}...`);
 } else {
-  console.log('⚠ Using fallback Gemini API key');
+  console.log('⚠ Using fallback API key');
 }
 
 // Initialize MongoDB client (no deprecated options needed in v6+)
