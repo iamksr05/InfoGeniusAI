@@ -6,7 +6,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="theme-color" content="#050509" />
   <link rel="shortcut icon" href="AI_logo.png" type="image/x-icon">
-  <link rel="manifest" href="/client/manifest.json" />
+  <link rel="apple-touch-icon" href="icons/apple-icon-180.png">
+  <link rel="manifest" href="./manifest.json" />
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
@@ -76,7 +77,7 @@
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {
         navigator.serviceWorker
-          .register("/service-worker.js")
+          .register("./service-worker.js?v=3")
           .then(function (registration) {
             console.log("Service Worker registered with scope:", registration.scope);
           })
