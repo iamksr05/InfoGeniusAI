@@ -194,13 +194,14 @@ function processMessageContent(text) {
 }
 
 // Function to simulate typing animation for bot responses
+// Function to simulate typing animation for bot responses
 function typeText(element, text) {
   element.innerHTML = ""; // Clear the content before typing
 
-  // Split text by code blocks - improved regex to handle various formats
+  // Split text by code blocks
   // Matches: ```language\ncode``` or ```\ncode``` or ```language code```
   const codeBlockRegex = /```(\w+)?\s*\n([\s\S]*?)```/g;
-  const parts = [];
+  const rawParts = [];
   let lastIndex = 0;
   let match;
   const codeBlocks = [];
@@ -210,7 +211,6 @@ function typeText(element, text) {
     const language = (match[1] || 'text').trim().toLowerCase();
     const code = match[2].trim();
 
-    // Only add if we have actual code content
     if (code.length > 0) {
       codeBlocks.push({
         start: match.index,
@@ -221,21 +221,47 @@ function typeText(element, text) {
     }
   }
 
-  // Build parts array
+  // Build raw parts array
   if (codeBlocks.length === 0) {
-    parts.push({ type: 'text', content: text });
+    rawParts.push({ type: 'text', content: text });
   } else {
     codeBlocks.forEach((block) => {
       if (block.start > lastIndex) {
-        parts.push({ type: 'text', content: text.substring(lastIndex, block.start) });
+        rawParts.push({ type: 'text', content: text.substring(lastIndex, block.start) });
       }
-      parts.push({ type: 'code', language: block.language, code: block.code });
+      rawParts.push({ type: 'code', language: block.language, code: block.code });
       lastIndex = block.end;
     });
     if (lastIndex < text.length) {
-      parts.push({ type: 'text', content: text.substring(lastIndex) });
+      rawParts.push({ type: 'text', content: text.substring(lastIndex) });
     }
   }
+
+  // Pre-process parts: Convert LaTeX/Math code blocks to text with $$ delimiters
+  const parts = [];
+  rawParts.forEach(part => {
+    const isMathCode = part.type === 'code' && ['latex', 'tex', 'math'].includes(part.language.toLowerCase());
+
+    if (isMathCode) {
+      // Convert to display math text
+      const mathContent = `\n$$${part.code}$$\n`;
+      // Merge with previous text part if possible
+      if (parts.length > 0 && parts[parts.length - 1].type === 'text') {
+        parts[parts.length - 1].content += mathContent;
+      } else {
+        parts.push({ type: 'text', content: mathContent });
+      }
+    } else if (part.type === 'text') {
+      // Merge with previous text part if possible
+      if (parts.length > 0 && parts[parts.length - 1].type === 'text') {
+        parts[parts.length - 1].content += part.content;
+      } else {
+        parts.push(part);
+      }
+    } else {
+      parts.push(part);
+    }
+  });
 
   // Render with typing animation
   let charCount = 0;
@@ -246,17 +272,14 @@ function typeText(element, text) {
       // Code blocks appear instantly
       const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-      // Trim the code and split into lines
       const codeLines = part.code.trimEnd().split('\n');
       const lineCount = codeLines.length;
 
-      // Generate line numbers - one per line
       let lineNumbersHTML = '';
       for (let i = 1; i <= lineCount; i++) {
         lineNumbersHTML += `<span class="line-number">${i}</span>\n`;
       }
 
-      // Escape each line separately to preserve structure
       const escapedCode = codeLines.map(line => escapeHtml(line)).join('\n');
 
       const codeBlockHTML =
@@ -281,16 +304,13 @@ function typeText(element, text) {
         const codeBlockElement = tempDiv.firstElementChild;
         element.appendChild(codeBlockElement);
 
-        // Ensure line numbers align with code after rendering
         setTimeout(() => {
           const codeElement = document.getElementById(codeId);
           const lineNumbersElement = codeBlockElement.querySelector('.line-numbers');
           if (codeElement && lineNumbersElement) {
-            // Match heights to ensure alignment
             const codeHeight = codeElement.offsetHeight;
             const lineNumbersHeight = lineNumbersElement.offsetHeight;
             if (Math.abs(codeHeight - lineNumbersHeight) > 2) {
-              // Adjust if heights don't match (accounting for padding differences)
               lineNumbersElement.style.minHeight = codeHeight + 'px';
             }
           }
@@ -299,23 +319,19 @@ function typeText(element, text) {
         attachCopyButtons(element);
       }, charCount * typingSpeed);
     } else {
-
-      // Process and animate text
-      // Use marked to parse the markdown content
+      // Process text with math protection
       const tempElement = document.createElement("div");
 
       // Protect math expressions from marked processing
       const mathStore = [];
-      // Regex for display math ($$...$$) and inline math ($...$)
-      // Exclude backticks in inline math to avoid matching code snippets
       const protectMath = (content) => {
         return content
-          .replace(/\$\$([\s\S]*?)\$\$/g, (match) => {
-            mathStore.push(match);
+          .replace(/\$\$([\s\S]*?)\$\$/g, (match, code) => {
+            mathStore.push(code); // Store content without delimiters
             return `MATHBLOCK${mathStore.length - 1}ENDMATHBLOCK`;
           })
-          .replace(/\$((?:\\.|[^\\$`])*)\$/g, (match) => {
-            mathStore.push(match);
+          .replace(/\$((?:\\.|[^\\$`])*)\$/g, (match, code) => {
+            mathStore.push(code); // Store content without delimiters
             return `MATHINLINE${mathStore.length - 1}ENDMATHINLINE`;
           });
       };
@@ -325,15 +341,31 @@ function typeText(element, text) {
       // Parse the content with marked
       let parsedHTML = parse(protectedContent, { breaks: true });
 
-      // Restore math expressions
+      // Restore math expressions wrapped in special span for atomic typing
       parsedHTML = parsedHTML.replace(/MATH(BLOCK|INLINE)(\d+)ENDMATH(BLOCK|INLINE)/g, (match, type, index) => {
-        return mathStore[parseInt(index)];
+        const mathCode = mathStore[parseInt(index, 10)];
+        const delimiter = type === 'BLOCK' ? '$$' : '$';
+        // Wrap in span.math-content and escape the inner math code to be safe HTML
+        // We include the delimiters inside the span so MathJax finds them
+        return `<span class="math-content">${delimiter}${escapeHtml(mathCode)}${delimiter}</span>`;
       });
 
       tempElement.innerHTML = parsedHTML;
 
       const processNode = (node, parent) => {
-        if (node.nodeType === Node.TEXT_NODE) {
+        if (node.nodeType === Node.ELEMENT_NODE && node.classList.contains('math-content')) {
+          // Atomic handling for math blocks - do not split children
+          const clonedNode = node.cloneNode(true);
+          clonedNode.style.display = 'none';
+          parent.appendChild(clonedNode);
+
+          setTimeout(() => {
+            clonedNode.style.display = 'inline';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+          }, charCount * typingSpeed);
+
+          charCount += 1; // Treat the whole math block as 1 unit of typing
+        } else if (node.nodeType === Node.TEXT_NODE) {
           const text = node.textContent;
           for (let j = 0; j < text.length; j++) {
             const span = document.createElement("span");
