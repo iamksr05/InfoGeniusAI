@@ -1,5 +1,8 @@
 console.log("🔥 Script loaded");
 import user from "./assets/user-icon.svg";
+import { parse } from "marked";
+
+
 
 // Get AI logo path - works for both local and hosted environments
 function getAILogoPath() {
@@ -221,51 +224,40 @@ function typeText(element, text) {
         attachCopyButtons(element);
       }, charCount * typingSpeed);
     } else {
+
       // Process and animate text
-      let processedText = formatInlineCode(part.content);
-      processedText = formatLinks(processedText);
-      processedText = processedText.replace(/(?![^<]*<\/pre>)\n/g, '<br>');
-
+      // Use marked to parse the markdown content
       const tempElement = document.createElement("div");
-      tempElement.innerHTML = processedText;
+      tempElement.innerHTML = parse(part.content, { breaks: true });
 
-      const processNode = (node) => {
+      const processNode = (node, parent) => {
         if (node.nodeType === Node.TEXT_NODE) {
           const text = node.textContent;
           for (let j = 0; j < text.length; j++) {
             const span = document.createElement("span");
             span.textContent = text[j];
             span.style.display = "none";
-            element.appendChild(span);
+            parent.appendChild(span);
 
             setTimeout(() => {
               span.style.display = "inline";
+              chatContainer.scrollTop = chatContainer.scrollHeight;
             }, charCount * typingSpeed);
             charCount++;
           }
         } else if (node.nodeType === Node.ELEMENT_NODE) {
-          const clonedNode = node.cloneNode(true);
-          // Clear cloned node's children, we'll add them separately
-          while (clonedNode.firstChild) {
-            clonedNode.removeChild(clonedNode.firstChild);
-          }
-          clonedNode.style.display = "none";
-          element.appendChild(clonedNode);
+          const clonedNode = node.cloneNode(false);
+          parent.appendChild(clonedNode);
 
-          const displayTime = charCount * typingSpeed;
           // Process children
           Array.from(node.childNodes).forEach(child => {
-            processNode(child);
+            processNode(child, clonedNode);
           });
-
-          setTimeout(() => {
-            clonedNode.style.display = "";
-          }, displayTime);
         }
       };
 
       Array.from(tempElement.childNodes).forEach(node => {
-        processNode(node);
+        processNode(node, element);
       });
     }
   });
@@ -457,11 +449,11 @@ const handleSubmit = async (e) => {
 
   // Backend server URLs
   const live = "https://updatedai-x4al.onrender.com";
-  const dev = "http://127.0.0.1:5000"; // For local development only
+  const dev = "http://localhost:5001"; // For local development only
 
   try {
     // Send the user's message to the backend for processing
-    const response = await fetch(live, {
+    const response = await fetch("http://localhost:5001", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -497,7 +489,7 @@ const handleSubmit = async (e) => {
       if (errorText.includes("quota")) {
         messageDiv.innerHTML =
           "Sorry for the inconvenience! The AI is temporarily unavailable. We are working to get things back up and running. Please try again shortly!";
-
+      } else {
         // Did not include "quota", so likely a server 500 error
         messageDiv.innerHTML = `Error: ${errorText}`;
       }

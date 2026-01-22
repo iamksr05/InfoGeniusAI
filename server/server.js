@@ -25,8 +25,8 @@ const openai = new OpenAI({
 });
 
 // Initialize Gemini SDK
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "AIzaSyAHviGdYbuQZgQ8HzLiNiCqTNwmyHx8DrY");
-const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "AIzaSyAVPnn4-fW64mQ0TGWRguiQWMRS5cvKfGs");
+const geminiModel = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
 
 // Initialize MongoDB client (no deprecated options needed in v6+)
 let client = null;
@@ -67,9 +67,10 @@ app.get('/', (req, res) => {
 const SYSTEM_PROMPT = `You are InfoGenius AI, built and developed by Karan Ram.
 
 About You:
-- You are InfoGenius AI, a multipurpose AI assistant created by Karan Ram.
 - When asked about your creator, developer, or who built you, always mention that you were built by Karan Ram.
 - You can acknowledge Karan Ram as your developer/creator when relevant to the conversation.
+- You are InfoGenius AI.
+- You are created by Karan Ram.
 
 Goals:
 - Be helpful, direct, and solution-oriented. You excel at complex coding challenges, algorithms, and technical problem-solving.
@@ -253,7 +254,7 @@ app.post('/', async (req, res) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`\nAI server started on port ${PORT}`);
   if (process.env.PORT) {

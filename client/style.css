@@ -170,7 +170,7 @@ body.light-mode .model-select option {
     max-width: 1200px;
     margin: 0 auto;
     overflow-y: auto;
-    padding: 24px 12px;
+    padding: 24px 12px 140px;
     /* Space for input area removed */
     /* margin-bottom: 20px; */
     display: flex;
@@ -199,6 +199,7 @@ body.light-mode .model-select option {
     /* Prevent layout shift - minimum height for profile + padding */
     opacity: 1;
     clear: both;
+    flex-shrink: 0;
 }
 
 /* Remove animation to prevent glitch - elements appear instantly */
@@ -212,15 +213,15 @@ body.light-mode .model-select option {
 }
 
 .chat {
-    max-width: 100%;
+    max-width: 85%;
     display: flex;
     align-items: flex-start;
     gap: 10px;
     position: relative;
     min-width: 0;
     /* Allow flex item to shrink */
-    flex-shrink: 0;
-    /* Prevent shrinking during layout */
+    flex-shrink: 1;
+    /* Allow shrinking to fit container */
     box-sizing: border-box;
 }
 
@@ -332,7 +333,8 @@ body.light-mode .model-select option {
     /* Allow text to wrap properly */
     flex-shrink: 1;
     flex-grow: 0;
-    max-width: 85%;
+    max-width: 100%;
+    width: 100%;
     box-sizing: border-box;
 }
 
@@ -880,7 +882,8 @@ textarea::placeholder {
     .chat {
         max-width: 90%;
         gap: 8px;
-        width: 100%;
+        min-width: 0;
+        flex-shrink: 1;
     }
 
     .wrapper.ai .chat,
