@@ -461,7 +461,7 @@ const handleSubmit = async (e) => {
 
   try {
     // Send the user's message to the backend for processing
-    const response = await fetch(dev, {
+    const response = await fetch(live, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

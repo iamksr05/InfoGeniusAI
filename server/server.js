@@ -25,7 +25,7 @@ const openai = new OpenAI({
 });
 
 // Initialize Gemini SDK
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "AIzaSyC7v-IU-UUCI-0w5ylBtrIaL9EY81VjlQM");
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "AIzaSyAHviGdYbuQZgQ8HzLiNiCqTNwmyHx8DrY");
 const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // Initialize MongoDB client (no deprecated options needed in v6+)
@@ -164,9 +164,18 @@ app.post('/', async (req, res) => {
 
     if (modelProvider === 'gemini') {
       // Gemini Logic
-      // For multi-turn chat, we should ideally construct the history in Gemini format
-      // Gemini roles: 'user' and 'model'
-      const geminiHistory = recentHistory.map(entry => ({
+      // 1. Exclude the last message (current user prompts) because sendMessage handles it.
+      // 2. Ensure alternating roles.
+      // The prefix history ends with 'model', so the next message must be 'user'.
+
+      let historyForGemini = recentHistory.slice(0, -1); // Remove the current user message that was just added
+
+      // If the remaining history starts with 'assistant' (model), remove it to avoid model-model sequence
+      if (historyForGemini.length > 0 && historyForGemini[0].role === 'assistant') {
+        historyForGemini.shift();
+      }
+
+      const geminiHistory = historyForGemini.map(entry => ({
         role: entry.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: entry.message }]
       }));
