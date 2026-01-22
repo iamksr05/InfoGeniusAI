@@ -4,6 +4,7 @@ import user from "./assets/user.svg";
 
 const form = document.querySelector("form");
 const chatContainer = document.querySelector("#chat_container");
+const sendIcon = document.getElementById("sendIcon");
 
 let loadInterval;
 let lastRequestTime = 0; // Track the time of the last request
@@ -76,9 +77,8 @@ function chatStripe(isAi, value, uniqueId) {
     <div class="wrapper ${isAi ? "ai" : "user"}">
         <div class="chat">
             <div class="profile">
-                <img src="${isAi ? bot : user}" alt="${
-    isAi ? "bot" : "user"
-  }" />
+                <img src="${isAi ? bot : user}" alt="${isAi ? "bot" : "user"
+    }" />
             </div>
             <div class="message" id="${uniqueId}">${value}</div>
         </div>
@@ -110,14 +110,17 @@ const handleSubmit = async (e) => {
   // Update the last request time
   lastRequestTime = currentTime;
 
+  // Hide the hero section when chat starts
+  const heroSection = document.getElementById("hero-section");
+  if (heroSection) {
+    heroSection.style.display = "none";
+  }
+
   // User's chat stripe
   chatContainer.innerHTML += chatStripe(false, prompt);
 
   // Clear the textarea input
   form.reset();
-
-  // Animate the send icon
-  sendIcon.classList.add("animate-send");
 
   // Animate the send icon
   sendIcon.classList.add("animate-send");
@@ -194,11 +197,6 @@ const handleSubmit = async (e) => {
 // Event listeners to handle form submission and input behavior
 document.addEventListener("DOMContentLoaded", function () {
   const promptInput = document.getElementById("prompt");
-  const sendIcon = document.getElementById("sendIcon");
-
-  // Add initial AI greeting message
-  const initialMessage = "Hey! 👋 I'm your ADHD-friendly AI companion. I keep things short, clear, and engaging. What would you like to explore today?";
-  chatContainer.innerHTML = chatStripe(true, initialMessage, generateUniqueId());
 
   document.getElementById("prompt").focus();
 
