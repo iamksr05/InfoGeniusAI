@@ -146,13 +146,12 @@ app.post('/', async (req, res) => {
       })),
     ];
 
-    // Using GPT-4 Turbo for superior coding and complex problem-solving capabilities
-    // This model excels at complex algorithms, system design, and advanced coding challenges
+    // Using GPT-3.5 Turbo for cost-effective responses
     const response = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
+      model: "gpt-3.5-turbo",
       messages,
       temperature: 0.2,
-      max_tokens: 4000,
+      max_tokens: 2000,
       top_p: 1,
       frequency_penalty: 0.5,
       presence_penalty: 0,

@@ -131,7 +131,7 @@ body {
     /* Space for input area */
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 16px;
     scroll-behavior: smooth;
     z-index: 5;
     position: relative;
@@ -148,10 +148,12 @@ body {
 .wrapper {
     width: 100%;
     display: flex;
-    padding: 8px 0;
+    padding: 0;
+    margin: 0;
     position: relative;
     min-height: 52px; /* Prevent layout shift - minimum height for profile + padding */
     opacity: 1;
+    clear: both;
 }
 
 /* Remove animation to prevent glitch - elements appear instantly */
@@ -165,7 +167,7 @@ body {
 }
 
 .chat {
-    max-width: 75%;
+    max-width: 90%;
     display: flex;
     align-items: flex-start;
     gap: 10px;
@@ -278,6 +280,19 @@ body {
     box-sizing: border-box;
 }
 
+/* Remove extra spacing for code blocks inside messages */
+.message .code-block-container {
+    margin: 0;
+}
+
+.message .code-block-container:first-child {
+    margin-top: 0;
+}
+
+.message .code-block-container:last-child {
+    margin-bottom: 0;
+}
+
 .message:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
@@ -370,7 +385,7 @@ body {
 
 /* Code Blocks */
 .code-block-container {
-    margin: 10px 0;
+    margin: 0;
     border-radius: 12px;
     overflow: hidden;
     background: #0d1117;
@@ -385,12 +400,13 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 10px;
+    padding: 0 12px;
     background: rgba(0, 0, 0, 0.35);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     line-height: 1;
     height: 32px;
     box-sizing: border-box;
+    margin: 0;
 }
 
 .code-language {
@@ -447,7 +463,7 @@ body {
 
 .code-block {
     margin: 0;
-    padding: 8px 12px;
+    padding: 12px;
     overflow-x: auto;
     overflow-y: hidden;
     background: #0d1117;
@@ -773,10 +789,14 @@ textarea::placeholder {
 
     /* Code blocks mobile */
     .code-block-container {
-        margin: 12px 0;
+        margin: 0;
         border-radius: 10px;
         width: 100%;
         max-width: 100%;
+    }
+    
+    .message .code-block-container {
+        margin: 0;
     }
 
     .code-header {
