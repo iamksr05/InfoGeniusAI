@@ -4,6 +4,7 @@ import cors from 'cors';
 import { OpenAI } from 'openai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { MongoClient } from 'mongodb';
+import fs from 'fs';
 
 dotenv.config(); // Load environment variables
 
@@ -25,7 +26,7 @@ const openai = new OpenAI({
 
 // Initialize Gemini SDK
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "AIzaSyC7v-IU-UUCI-0w5ylBtrIaL9EY81VjlQM");
-const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+const geminiModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // Initialize MongoDB client (no deprecated options needed in v6+)
 let client = null;
@@ -237,6 +238,7 @@ app.post('/', async (req, res) => {
 
   } catch (error) {
     console.error('Error during chat processing:', error);
+    fs.appendFileSync('server_error.log', `${new Date().toISOString()} - Error: ${error.message}\n${error.stack}\n\n`);
     res.status(500).send('Something went wrong: ' + error.message);
   }
 });
