@@ -96,25 +96,25 @@ function formatCodeBlocks(text) {
   return text.replace(codeBlockRegex, (match, lang, code) => {
     const language = (lang || 'text').trim().toLowerCase();
     const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    
+
     // Only format if we have actual code content
     if (code.trim().length === 0) {
       return match; // Return original if empty
     }
-    
+
     // Split code into lines and process each line
     const codeLines = code.trimEnd().split('\n');
     const lineCount = codeLines.length;
-    
+
     // Generate line numbers - one per line
     let lineNumbersHTML = '';
     for (let i = 1; i <= lineCount; i++) {
       lineNumbersHTML += `<span class="line-number">${i}</span>\n`;
     }
-    
+
     // Escape each line separately
     const escapedCode = codeLines.map(line => escapeHtml(line)).join('\n');
-    
+
     return '<div class="code-block-container">' +
       '<div class="code-header">' +
       '<span class="code-language">' + language + '</span>' +
@@ -209,7 +209,7 @@ function typeText(element, text) {
   while ((match = codeBlockRegex.exec(text)) !== null) {
     const language = (match[1] || 'text').trim().toLowerCase();
     const code = match[2].trim();
-    
+
     // Only add if we have actual code content
     if (code.length > 0) {
       codeBlocks.push({
@@ -245,20 +245,20 @@ function typeText(element, text) {
     if (part.type === 'code') {
       // Code blocks appear instantly
       const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
+
       // Trim the code and split into lines
       const codeLines = part.code.trimEnd().split('\n');
       const lineCount = codeLines.length;
-      
+
       // Generate line numbers - one per line
       let lineNumbersHTML = '';
       for (let i = 1; i <= lineCount; i++) {
         lineNumbersHTML += `<span class="line-number">${i}</span>\n`;
       }
-      
+
       // Escape each line separately to preserve structure
       const escapedCode = codeLines.map(line => escapeHtml(line)).join('\n');
-      
+
       const codeBlockHTML =
         '<div class="code-block-container">' +
         '<div class="code-header">' +
@@ -280,7 +280,7 @@ function typeText(element, text) {
         tempDiv.innerHTML = codeBlockHTML;
         const codeBlockElement = tempDiv.firstElementChild;
         element.appendChild(codeBlockElement);
-        
+
         // Ensure line numbers align with code after rendering
         setTimeout(() => {
           const codeElement = document.getElementById(codeId);
@@ -295,7 +295,7 @@ function typeText(element, text) {
             }
           }
         }, 10);
-        
+
         attachCopyButtons(element);
       }, charCount * typingSpeed);
     } else {
@@ -303,7 +303,34 @@ function typeText(element, text) {
       // Process and animate text
       // Use marked to parse the markdown content
       const tempElement = document.createElement("div");
-      tempElement.innerHTML = parse(part.content, { breaks: true });
+
+      // Protect math expressions from marked processing
+      const mathStore = [];
+      // Regex for display math ($$...$$) and inline math ($...$)
+      // Exclude backticks in inline math to avoid matching code snippets
+      const protectMath = (content) => {
+        return content
+          .replace(/\$\$([\s\S]*?)\$\$/g, (match) => {
+            mathStore.push(match);
+            return `MATHBLOCK${mathStore.length - 1}ENDMATHBLOCK`;
+          })
+          .replace(/\$((?:\\.|[^\\$`])*)\$/g, (match) => {
+            mathStore.push(match);
+            return `MATHINLINE${mathStore.length - 1}ENDMATHINLINE`;
+          });
+      };
+
+      const protectedContent = protectMath(part.content);
+
+      // Parse the content with marked
+      let parsedHTML = parse(protectedContent, { breaks: true });
+
+      // Restore math expressions
+      parsedHTML = parsedHTML.replace(/MATH(BLOCK|INLINE)(\d+)ENDMATH(BLOCK|INLINE)/g, (match, type, index) => {
+        return mathStore[parseInt(index)];
+      });
+
+      tempElement.innerHTML = parsedHTML;
 
       const processNode = (node, parent) => {
         if (node.nodeType === Node.TEXT_NODE) {
@@ -411,10 +438,10 @@ function chatStripe(isAi, value, uniqueId) {
   const imgTag = isAi
     ? `<img src="${logoPath}" alt="bot" onerror="if(this.src!=='./AI_logo.png'){this.src='./AI_logo.png';}else if(this.src!=='AI_logo.png'){this.src='AI_logo.png';}else{console.error('Failed to load AI logo');}" />`
     : `<img src="${logoPath}" alt="user" />`;
-  
+
   // Format user messages to preserve line breaks, AI messages are already formatted
   const formattedValue = isAi ? value : formatUserMessage(value);
-  
+
   // NO NEWLINES, NO GHOST NODES
   return '<div class="wrapper ' + (isAi ? 'ai' : 'user') + '">' +
     '<div class="chat">' +
@@ -594,7 +621,7 @@ const handleSubmit = async (e) => {
 
     // Show user-friendly error message based on error type
     const errorMessage = error.message || String(error);
-    
+
     if (errorMessage.includes('Failed to fetch') || errorMessage.includes('NetworkError') || errorMessage.includes('ERR_NETWORK')) {
       messageDiv.innerHTML = "Network error: Unable to connect to the server. Please check:<br>• Your internet connection<br>• That the server is running on http://localhost:5001<br>• Your firewall settings";
     } else if (errorMessage.includes('CORS')) {
