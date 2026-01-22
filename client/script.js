@@ -1,6 +1,35 @@
 console.log("🔥 Script loaded");
 import user from "./assets/user-icon.svg";
 
+// Get AI logo path - works for both local and hosted environments
+const AI_LOGO_PATH = (() => {
+  // Get the base URL
+  const baseURL = window.location.origin;
+  const pathname = window.location.pathname;
+  
+  // If pathname includes /client/, use absolute path
+  if (pathname.includes('/client/')) {
+    return '/client/AI_logo.png';
+  }
+  
+  // Try to get the script's directory
+  const scripts = Array.from(document.getElementsByTagName('script'));
+  const moduleScript = scripts.find(s => s.type === 'module' && s.src);
+  
+  if (moduleScript && moduleScript.src) {
+    const scriptURL = new URL(moduleScript.src, window.location.href);
+    const scriptDir = scriptURL.pathname.substring(0, scriptURL.pathname.lastIndexOf('/') + 1);
+    const logoPath = scriptDir + 'AI_logo.png';
+    console.log('AI Logo path resolved to:', logoPath);
+    return logoPath;
+  }
+  
+  // Fallback to relative path
+  const fallbackPath = 'AI_logo.png';
+  console.log('AI Logo path using fallback:', fallbackPath);
+  return fallbackPath;
+})();
+
 const form = document.querySelector("form");
 const chatContainer = document.querySelector("#chat_container");
 const sendIcon = document.getElementById("sendIcon");
@@ -300,7 +329,7 @@ function chatStripe(isAi, value, uniqueId) {
     <div class="wrapper ${isAi ? "ai" : "user"}">
         <div class="chat">
             <div class="profile ${isAi ? "ai-profile" : ""}" ${isAi ? `id="ai-profile-${uniqueId}"` : ""}>
-                <img src="${isAi ? "./AI_logo.png" : user}" alt="${isAi ? "bot" : "user"
+                <img src="${isAi ? AI_LOGO_PATH : user}" alt="${isAi ? "bot" : "user"
     }" />
             </div>
             <div class="message" id="${uniqueId}">${value}</div>
@@ -339,11 +368,20 @@ const handleSubmit = async (e) => {
     heroSection.style.display = "none";
   }
 
-  // User's chat stripe
-  chatContainer.innerHTML += chatStripe(false, prompt);
+  // User's chat stripe - use insertAdjacentHTML for better performance
+  chatContainer.insertAdjacentHTML('beforeend', chatStripe(false, prompt));
+  
+  // Force a reflow to ensure the element is rendered before continuing
+  chatContainer.offsetHeight;
 
-  // Clear the textarea input
+  // Clear the textarea input and reset height
   form.reset();
+  const promptInput = document.getElementById("prompt");
+  if (promptInput) {
+    promptInput.style.height = 'auto';
+    promptInput.style.height = '44px'; // Reset to minimum height
+    promptInput.style.overflowY = 'hidden';
+  }
 
   // Animate the send icon
   sendIcon.classList.add("animate-send");
@@ -359,10 +397,17 @@ const handleSubmit = async (e) => {
 
   // Bot's chat stripe
   const uniqueId = generateUniqueId();
-  chatContainer.innerHTML += chatStripe(true, " ", uniqueId);
+  chatContainer.insertAdjacentHTML('beforeend', chatStripe(true, " ", uniqueId));
+  
+  // Force a reflow again
+  chatContainer.offsetHeight;
 
-  // Scroll to the bottom
-  chatContainer.scrollTop = chatContainer.scrollHeight;
+  // Scroll to the bottom after DOM update - use double RAF for better reliability
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    });
+  });
 
   // Specific message div for the bot response
   const messageDiv = document.getElementById(uniqueId);
@@ -396,7 +441,7 @@ const handleSubmit = async (e) => {
 
   try {
     // Send the user's message to the backend for processing
-    const response = await fetch(live, {
+    const response = await fetch(dev, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -457,11 +502,49 @@ const handleSubmit = async (e) => {
   }
 };
 
+// Function to auto-expand textarea
+function autoExpandTextarea(textarea) {
+  // Reset height to auto to get the correct scrollHeight
+  textarea.style.height = 'auto';
+  
+  // Calculate the new height based on scrollHeight
+  const scrollHeight = textarea.scrollHeight;
+  const minHeight = 44; // Minimum height in pixels
+  const maxHeight = 200; // Maximum height in pixels
+  
+  // Set the height, clamping between min and max
+  const newHeight = Math.min(Math.max(scrollHeight, minHeight), maxHeight);
+  textarea.style.height = newHeight + 'px';
+  
+  // If content exceeds max height, show scrollbar
+  if (scrollHeight > maxHeight) {
+    textarea.style.overflowY = 'auto';
+  } else {
+    textarea.style.overflowY = 'hidden';
+  }
+}
+
 // Event listeners to handle form submission and input behavior
 document.addEventListener("DOMContentLoaded", function () {
   const promptInput = document.getElementById("prompt");
 
   document.getElementById("prompt").focus();
+
+  // Auto-expand textarea on input
+  promptInput.addEventListener('input', () => {
+    autoExpandTextarea(promptInput);
+  });
+
+  // Auto-expand on paste
+  promptInput.addEventListener('paste', () => {
+    // Use setTimeout to wait for paste content to be inserted
+    setTimeout(() => {
+      autoExpandTextarea(promptInput);
+    }, 0);
+  });
+
+  // Initial height adjustment
+  autoExpandTextarea(promptInput);
 
   form.addEventListener("submit", handleSubmit);
   form.addEventListener("keydown", (e) => {

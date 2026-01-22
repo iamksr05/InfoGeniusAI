@@ -149,19 +149,12 @@ body {
     width: 100%;
     display: flex;
     padding: 8px 0;
-    animation: fadeIn 0.3s ease-out;
+    position: relative;
+    min-height: 52px; /* Prevent layout shift - minimum height for profile + padding */
+    opacity: 1;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+/* Remove animation to prevent glitch - elements appear instantly */
 
 .wrapper.user {
     justify-content: flex-end;
@@ -178,6 +171,8 @@ body {
     gap: 10px;
     position: relative;
     min-width: 0; /* Allow flex item to shrink */
+    flex-shrink: 0; /* Prevent shrinking during layout */
+    box-sizing: border-box;
 }
 
 .wrapper.user .chat {
@@ -196,6 +191,7 @@ body {
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s ease;
+    position: relative;
 }
 
 .profile:hover {
@@ -219,6 +215,7 @@ body {
     width: 22px;
     height: 22px;
     object-fit: contain;
+    display: block;
 }
 
 .wrapper.user .profile img {
@@ -232,6 +229,9 @@ body {
     object-fit: cover;
     border-radius: 50%;
     transition: transform 0.3s ease;
+    display: block;
+    visibility: visible;
+    opacity: 1;
 }
 
 /* AI Logo Rotation Animation when thinking */
@@ -272,6 +272,10 @@ body {
     position: relative;
     transition: all 0.2s ease;
     min-width: 0; /* Allow text to wrap properly */
+    flex-shrink: 1;
+    flex-grow: 0;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .message:hover {
@@ -628,8 +632,13 @@ textarea {
     font-size: 15px;
     padding: 12px 10px;
     resize: none;
-    max-height: 150px;
+    max-height: 200px;
+    min-height: 44px;
+    height: auto;
     line-height: 1.5;
+    overflow-y: auto;
+    box-sizing: border-box;
+    transition: height 0.1s ease-out;
 }
 
 textarea::placeholder {
@@ -668,7 +677,10 @@ textarea::placeholder {
     cursor: pointer;
     transition: 0.2s;
     margin-left: auto;
+    flex-shrink: 0;
     /* Push to right if needed, but flex handles it */
+    align-self: flex-end;
+    margin-bottom: 2px; /* Align with textarea padding */
 }
 
 #sendButton:hover {
