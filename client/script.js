@@ -2,33 +2,57 @@ console.log("🔥 Script loaded");
 import user from "./assets/user-icon.svg";
 
 // Get AI logo path - works for both local and hosted environments
-const AI_LOGO_PATH = (() => {
-  // Get the base URL
-  const baseURL = window.location.origin;
-  const pathname = window.location.pathname;
-  
-  // If pathname includes /client/, use absolute path
-  if (pathname.includes('/client/')) {
-    return '/client/AI_logo.png';
+function getAILogoPath() {
+  // Strategy 1: Check if hero logo exists and use same path
+  const heroLogo = document.querySelector('#hero-section .hero-logo');
+  if (heroLogo && heroLogo.src) {
+    try {
+      const heroURL = new URL(heroLogo.src);
+      // If hero logo is loaded successfully, use the same base path
+      if (heroLogo.complete && heroLogo.naturalWidth > 0) {
+        const heroPath = heroLogo.getAttribute('src');
+        console.log('AI Logo path (from hero logo):', heroPath);
+        return heroPath;
+      }
+    } catch (e) {
+      // Continue to other strategies
+    }
   }
   
-  // Try to get the script's directory
+  // Strategy 2: If we're in a subdirectory like /client/, use absolute path
+  const pathname = window.location.pathname;
+  if (pathname.includes('/client/')) {
+    const absolutePath = '/client/AI_logo.png';
+    console.log('AI Logo path (subdirectory):', absolutePath);
+    return absolutePath;
+  }
+  
+  // Strategy 3: Try to get from script location (most reliable)
   const scripts = Array.from(document.getElementsByTagName('script'));
   const moduleScript = scripts.find(s => s.type === 'module' && s.src);
   
   if (moduleScript && moduleScript.src) {
-    const scriptURL = new URL(moduleScript.src, window.location.href);
-    const scriptDir = scriptURL.pathname.substring(0, scriptURL.pathname.lastIndexOf('/') + 1);
-    const logoPath = scriptDir + 'AI_logo.png';
-    console.log('AI Logo path resolved to:', logoPath);
-    return logoPath;
+    try {
+      const scriptURL = new URL(moduleScript.src, window.location.href);
+      const scriptDir = scriptURL.pathname.substring(0, scriptURL.pathname.lastIndexOf('/') + 1);
+      const logoPath = scriptDir + 'AI_logo.png';
+      console.log('AI Logo path (from script):', logoPath);
+      return logoPath;
+    } catch (e) {
+      console.warn('Error resolving script path:', e);
+    }
   }
   
-  // Fallback to relative path
-  const fallbackPath = 'AI_logo.png';
-  console.log('AI Logo path using fallback:', fallbackPath);
-  return fallbackPath;
-})();
+  // Strategy 4: Use relative path from current page
+  const currentDir = pathname.endsWith('/') 
+    ? pathname 
+    : pathname.substring(0, pathname.lastIndexOf('/') + 1);
+  const relativePath = currentDir + 'AI_logo.png';
+  console.log('AI Logo path (relative):', relativePath);
+  return relativePath;
+}
+
+const AI_LOGO_PATH = getAILogoPath();
 
 const form = document.querySelector("form");
 const chatContainer = document.querySelector("#chat_container");
@@ -47,17 +71,13 @@ function getSessionId() {
 
 // Function to create the typing loader animation
 function loader(element) {
-  element.textContent = "";
-
-  loadInterval = setInterval(() => {
-    // Update the text content of the loading indicator
-    element.textContent += ".";
-
-    // If the loading indicator has reached three dots, reset it
-    if (element.textContent === "....") {
-      element.textContent = "";
-    }
-  }, 300);
+  element.innerHTML = `
+    <span class="thinking-indicator">
+      <span class="thinking-dot"></span>
+      <span class="thinking-dot"></span>
+      <span class="thinking-dot"></span>
+    </span>
+  `;
 }
 
 // Function to format code blocks with copy button
@@ -69,19 +89,16 @@ function formatCodeBlocks(text) {
     const language = lang || 'text';
     const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     const escapedCode = escapeHtml(code.trim());
-    
-    return `
-      <div class="code-block-container">
-        <div class="code-header">
-          <span class="code-language">${language}</span>
-          <button class="copy-code-btn" data-code-id="${codeId}" title="Copy code">
-            <span class="material-icons-round copy-icon">content_copy</span>
-            <span class="copy-text">Copy</span>
-          </button>
-        </div>
-        <pre class="code-block"><code id="${codeId}" class="language-${language}">${escapedCode}</code></pre>
-      </div>
-    `;
+    return '<div class="code-block-container">' +
+           '<div class="code-header">' +
+           '<span class="code-language">' + language + '</span>' +
+           '<button class="copy-code-btn" data-code-id="' + codeId + '" title="Copy code">' +
+           '<span class="material-icons-round copy-icon">content_copy</span>' +
+           '<span class="copy-text">Copy</span>' +
+           '</button>' +
+           '</div>' +
+           '<pre class="code-block"><code id="' + codeId + '" class="language-' + language + '">' + escapedCode + '</code></pre>' +
+           '</div>';
   });
 }
 
@@ -134,8 +151,7 @@ function processMessageContent(text) {
   processed = formatLinks(processed);
   
   // Convert line breaks to <br>
-  processed = processed.replace(/\n/g, '<br>');
-  
+  processed = processed.replace(/(?![^<]*<\/pre>)\n/g, '<br>');  
   return processed;
 }
 
@@ -156,7 +172,7 @@ function typeText(element, text) {
       start: match.index,
       end: match.index + match[0].length,
       language: match[1] || 'text',
-      code: match[2].trim()
+      code: match[2]
     });
   }
   
@@ -185,19 +201,19 @@ function typeText(element, text) {
       // Code blocks appear instantly
       const codeId = `code-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
       const escapedCode = escapeHtml(part.code);
-      const codeBlockHTML = `
-        <div class="code-block-container">
-          <div class="code-header">
-            <span class="code-language">${part.language}</span>
-            <button class="copy-code-btn" data-code-id="${codeId}" title="Copy code">
-              <span class="material-icons-round copy-icon">content_copy</span>
-              <span class="copy-text">Copy</span>
-            </button>
-          </div>
-          <pre class="code-block"><code id="${codeId}" class="language-${part.language}">${escapedCode}</code></pre>
-        </div>
-      `;
-      
+      const codeBlockHTML =
+        '<div class="code-block-container">' +
+          '<div class="code-header">' +
+            '<span class="code-language" style="padding: 8px;">' + part.language + '</span>' +
+            '<button class="copy-code-btn" data-code-id="' + codeId + '" title="Copy code">' +
+              '<span class="material-icons-round copy-icon">content_copy</span>' +
+              '<span class="copy-text">Copy</span>' +
+            '</button>' +
+          '</div>' +
+          '<pre class="code-block"><code style="padding: 6px 16px;" id="' + codeId + '" class="language-' + part.language + '">' +
+            escapedCode +
+          '</code></pre>' +
+        '</div>';
       setTimeout(() => {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = codeBlockHTML;
@@ -208,7 +224,7 @@ function typeText(element, text) {
       // Process and animate text
       let processedText = formatInlineCode(part.content);
       processedText = formatLinks(processedText);
-      processedText = processedText.replace(/\n/g, '<br>');
+      processedText = processedText.replace(/(?![^<]*<\/pre>)\n/g, '<br>');
       
       const tempElement = document.createElement("div");
       tempElement.innerHTML = processedText;
@@ -322,17 +338,22 @@ function generateUniqueId() {
 
 // Function to create the chat stripe (bubble) for each message
 function chatStripe(isAi, value, uniqueId) {
-  return `
-    <div class="wrapper ${isAi ? "ai" : "user"}">
-        <div class="chat">
-            <div class="profile ${isAi ? "ai-profile" : ""}" ${isAi ? `id="ai-profile-${uniqueId}"` : ""}>
-                <img src="${isAi ? AI_LOGO_PATH : user}" alt="${isAi ? "bot" : "user"
-    }" />
-            </div>
-            <div class="message" id="${uniqueId}">${value}</div>
-        </div>
-    </div>
-    `;
+  // Resolve logo path at runtime to ensure it's correct
+  const logoPath = isAi ? getAILogoPath() : user;
+  // For AI logo, add error handling with fallback paths
+  const imgTag = isAi 
+    ? `<img src="${logoPath}" alt="bot" onerror="if(this.src!=='./AI_logo.png'){this.src='./AI_logo.png';}else if(this.src!=='AI_logo.png'){this.src='AI_logo.png';}else{console.error('Failed to load AI logo');}" />`
+    : `<img src="${logoPath}" alt="user" />`;
+  // NO NEWLINES, NO GHOST NODES
+  return '<div class="wrapper ' + (isAi ? 'ai' : 'user') + '">' +
+           '<div class="chat">' +
+             '<div class="profile ' + (isAi ? 'ai-profile' : '') + '"' +
+               (isAi ? ' id="ai-profile-' + uniqueId + '"' : '') + '>' +
+               imgTag +
+             '</div>' +
+             '<div class="message" id="' + uniqueId + '">' + value + '</div>' +
+           '</div>' +
+         '</div>';
 }
 
 // Handle form submission and chat functionality
