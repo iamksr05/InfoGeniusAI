@@ -11,9 +11,9 @@
 body {
     background: #050509;
     color: #ffffff;
-    height: 100vh;
     width: 100vw;
     overflow: hidden;
+    height: 100vh;
 }
 
 #app {
@@ -152,7 +152,8 @@ body {
     padding: 0;
     margin: 0;
     position: relative;
-    min-height: 52px; /* Prevent layout shift - minimum height for profile + padding */
+    min-height: 52px;
+    /* Prevent layout shift - minimum height for profile + padding */
     opacity: 1;
     clear: both;
 }
@@ -173,8 +174,10 @@ body {
     align-items: flex-start;
     gap: 10px;
     position: relative;
-    min-width: 0; /* Allow flex item to shrink */
-    flex-shrink: 0; /* Prevent shrinking during layout */
+    min-width: 0;
+    /* Allow flex item to shrink */
+    flex-shrink: 0;
+    /* Prevent shrinking during layout */
     box-sizing: border-box;
 }
 
@@ -262,6 +265,7 @@ body {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
@@ -281,7 +285,8 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.05);
     position: relative;
     transition: all 0.2s ease;
-    min-width: 0; /* Allow text to wrap properly */
+    min-width: 0;
+    /* Allow text to wrap properly */
     flex-shrink: 1;
     flex-grow: 0;
     max-width: 85%;
@@ -311,7 +316,7 @@ body {
 }
 
 /* Remove margin from paragraph immediately before code block */
-.message p + .code-block-container {
+.message p+.code-block-container {
     margin-top: 0;
 }
 
@@ -327,7 +332,7 @@ body {
 }
 
 /* Remove margin from paragraph immediately after code block */
-.message .code-block-container + p {
+.message .code-block-container+p {
     margin-top: 0;
     margin-bottom: 12px;
 }
@@ -509,7 +514,8 @@ body {
     background: #0d1117;
     color: #c9d1d9;
     font-family: 'Fira Code', 'SF Mono', 'Monaco', 'Menlo', 'Ubuntu Mono', 'Consolas', monospace;
-    font-variant-ligatures: contextual;    font-size: 13px;
+    font-variant-ligatures: contextual;
+    font-size: 13px;
     line-height: 1.4;
     white-space: pre;
     word-wrap: normal;
@@ -744,7 +750,8 @@ textarea::placeholder {
     flex-shrink: 0;
     /* Push to right if needed, but flex handles it */
     align-self: flex-end;
-    margin-bottom: 2px; /* Align with textarea padding */
+    margin-bottom: 2px;
+    /* Align with textarea padding */
 }
 
 #sendButton:hover {
@@ -794,10 +801,32 @@ textarea::placeholder {
 @media (max-width: 600px) {
     .hero-title {
         font-size: 24px;
+        padding: 0 20px;
     }
 
     #header {
-        padding: 15px;
+        padding: 12px 16px;
+    }
+
+    .app-title {
+        font-size: 13px;
+    }
+
+    #input-area {
+        padding: 12px;
+        background: #050509;
+        /* Solid background for mobile to hide content behind */
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    body.light-mode #input-area {
+        background: #f5f5f5;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    textarea {
+        font-size: 16px;
+        /* Prevent zoom on iOS */
     }
 
     #chat_container {
@@ -842,7 +871,7 @@ textarea::placeholder {
         width: 100%;
         max-width: 100%;
     }
-    
+
     .message .code-block-container {
         margin: 0;
     }
@@ -882,7 +911,7 @@ textarea::placeholder {
         line-height: 1.55;
         max-width: 100%;
     }
-    
+
     .code-block code {
         padding: 0;
         margin: 0;
@@ -1072,17 +1101,17 @@ body.light-mode .wrapper.user .message a:hover {
 }
 
 /* Kill accidental spacing caused by adjacent elements */
-.message > .code-block-container {
+.message>.code-block-container {
     margin-top: 0 !important;
     margin-bottom: 0 !important;
 }
 
 /* Remove spacing if code block is first or last element */
-.message > .code-block-container:first-child {
+.message>.code-block-container:first-child {
     margin-top: 0 !important;
 }
 
-.message > .code-block-container:last-child {
+.message>.code-block-container:last-child {
     margin-bottom: 0 !important;
 }
 
@@ -1096,15 +1125,15 @@ body.light-mode .wrapper.user .message a:hover {
     margin-bottom: 4px;
 }
 
-.message p + .code-block-container {
+.message p+.code-block-container {
     margin-top: 4px !important;
 }
 
-.code-block-container + p {
+.code-block-container+p {
     margin-top: 6px !important;
 }
 
-#chat_container > .wrapper:last-child {
+#chat_container>.wrapper:last-child {
     margin-bottom: 0;
 }
 
@@ -1115,6 +1144,7 @@ body.light-mode .wrapper.user .message a:hover {
 .code-block {
     padding: 6px 10px;
 }
+
 /* # Modern AI “thinking” indicator */
 .thinking-indicator {
     display: inline-flex;
@@ -1131,12 +1161,28 @@ body.light-mode .wrapper.user .message a:hover {
     animation: thinkingPulse 1.4s infinite ease-in-out;
 }
 
-.thinking-dot:nth-child(1) { animation-delay: 0s; }
-.thinking-dot:nth-child(2) { animation-delay: 0.2s; }
-.thinking-dot:nth-child(3) { animation-delay: 0.4s; }
+.thinking-dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.thinking-dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.thinking-dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
 
 @keyframes thinkingPulse {
-    0% { opacity: 0.3; }
-    50% { opacity: 1; }
-    100% { opacity: 0.3; }
+    0% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.3;
+    }
 }
