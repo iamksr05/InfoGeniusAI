@@ -21,11 +21,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// --- MODEL CONTROL PANEL ---
-const IS_MODEL_2_OFFLINE = true; // Set to true to make Model 2 stop responding
-// ---------------------------
+const IS_MODEL_2_OFFLINE = true;
 
-// Check for required environment variables
 if (!process.env.OPENAI_API_KEY) {
   console.error('ERROR: OPENAI_API_KEY is not set in .env file');
   console.error('Please create a .env file with: OPENAI_API_KEY=your_key_here');
@@ -131,18 +128,18 @@ function toOpenAIRole(role) {
 // Function to clean Gemini responses and remove unwanted introductions
 function cleanGeminiResponse(text) {
   if (!text) return text;
-  
+
   // Protect code blocks from being modified
   const codeBlockRegex = /```[\s\S]*?```/g;
   const codeBlocks = [];
   let blockIndex = 0;
-  
+
   // Extract all code blocks first
   let cleaned = text.replace(codeBlockRegex, (match) => {
     codeBlocks.push(match);
     return `__CODE_BLOCK_${blockIndex++}__`;
   });
-  
+
   // Common introduction patterns to remove (case-insensitive)
   const introPatterns = [
     /^Hello!?\s*I\s+am\s+InfoGenius\s+AI[.,!]?\s*/i,
@@ -152,28 +149,28 @@ function cleanGeminiResponse(text) {
     /^This\s+.*?\s+is\s+designed\s+by\s+InfoGenius\s+AI[.,!]?\s*(?:built\s+and\s+developed\s+by\s+Karan\s+Ram[.,!]?)?\s*/i,
     /^As\s+InfoGenius\s+AI[.,!]?\s*/i,
   ];
-  
+
   // Remove introduction patterns (only from non-code parts)
   for (const pattern of introPatterns) {
     cleaned = cleaned.replace(pattern, '');
   }
-  
+
   // Remove "How can I help you today?" or similar at the start
   cleaned = cleaned.replace(/^How\s+can\s+I\s+help\s+you\s+today\?[.,!]?\s*/i, '');
-  
+
   // Restore code blocks
   codeBlocks.forEach((block, index) => {
     cleaned = cleaned.replace(`__CODE_BLOCK_${index}__`, block);
   });
-  
+
   // Trim but preserve code block formatting
   cleaned = cleaned.trim();
-  
+
   // If we removed everything, return original (shouldn't happen, but safety check)
   if (!cleaned) {
     return text.trim();
   }
-  
+
   return cleaned;
 }
 
@@ -231,7 +228,7 @@ app.post('/', async (req, res) => {
     // Fallback to in-memory history if MongoDB is not available
     // Also maintain in-memory history for redundancy
     const sessionHistory = getSessionHistory(sessionId);
-    
+
     if (!mongoConnected || recentHistory.length === 0) {
       // If MongoDB not available, use in-memory
       sessionHistory.push({ role: 'user', message: userMessage, ts: Date.now() });
@@ -264,8 +261,8 @@ app.post('/', async (req, res) => {
     if (modelProvider === 'gemini') {
       // Check if Model 2 is explicitly disabled
       if (IS_MODEL_2_OFFLINE) {
-        return res.status(200).send({ 
-          bot: "Model 2 is currently offline. Please switch to Model 1 or try again later." 
+        return res.status(200).send({
+          bot: "Model 2 is currently offline. Please switch to Model 1 or try again later."
         });
       }
 
@@ -329,7 +326,7 @@ def hello():
             role: "model",
             parts: [{ text: "Understood." }]
           };
-          
+
           chat = geminiModel.startChat({
             history: [systemMessage, modelAck, ...geminiHistory],
             generationConfig: {
@@ -347,26 +344,26 @@ def hello():
       try {
         const result = await chat.sendMessage(userMessage);
         const response = await result.response;
-        
+
         // Check if response was truncated
         const finishReason = response.candidates?.[0]?.finishReason;
         if (finishReason === 'MAX_TOKENS' || finishReason === 'OTHER') {
           console.warn(`Warning: Response may be truncated. Finish reason: ${finishReason}`);
         }
-        
+
         let rawResponse = response.text();
-        
+
         // Log response length for debugging
         console.log(`Gemini response length: ${rawResponse.length} characters, finish reason: ${finishReason || 'SUCCESS'}`);
-        
+
         // Check if response was truncated
         if (rawResponse.length >= 8000) {
           console.warn('Response may be near token limit. Consider if full response was received.');
         }
-        
+
         // Clean the response to remove unwanted introductions
         botResponse = cleanGeminiResponse(rawResponse);
-        
+
         // Log cleaned response length
         if (botResponse.length !== rawResponse.length) {
           console.log(`Response cleaned: ${rawResponse.length} -> ${botResponse.length} characters`);
@@ -443,12 +440,12 @@ def hello():
   } catch (error) {
     console.error('Error during chat processing:', error);
     fs.appendFileSync('server_error.log', `${new Date().toISOString()} - Error: ${error.message}\n${error.stack}\n\n`);
-    
+
     // Send more specific error messages
     const errorMessage = error.message || String(error);
     let statusCode = 500;
     let errorResponse = errorMessage;
-    
+
     // Check for specific error types
     if (errorMessage.includes('QUOTA_EXCEEDED')) {
       statusCode = 429;
@@ -457,7 +454,7 @@ def hello():
       statusCode = 401;
       errorResponse = 'API_KEY_ERROR';
     }
-    
+
     res.status(statusCode).send(errorResponse);
   }
 });
