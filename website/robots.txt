@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /server/
+Disallow: /package.json
+Disallow: /package-lock.json
 
 Sitemap: https://infogeniusai.onrender.com/sitemap.xml
