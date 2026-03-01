@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://infogeniusai.onrender.com/sitemap.xml
