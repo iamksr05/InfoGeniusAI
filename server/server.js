@@ -21,6 +21,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+// --- MODEL CONTROL PANEL ---
+const IS_MODEL_2_OFFLINE = true; // Set to true to make Model 2 stop responding
+// ---------------------------
+
 // Check for required environment variables
 if (!process.env.OPENAI_API_KEY) {
   console.error('ERROR: OPENAI_API_KEY is not set in .env file');
@@ -258,6 +262,13 @@ app.post('/', async (req, res) => {
     let botResponse = "Sorry, I couldn't generate a response.";
 
     if (modelProvider === 'gemini') {
+      // Check if Model 2 is explicitly disabled
+      if (IS_MODEL_2_OFFLINE) {
+        return res.status(200).send({ 
+          bot: "Model 2 is currently offline. Please switch to Model 1 or try again later." 
+        });
+      }
+
       // Gemini Logic
       // 1. Exclude the last message (current user prompts) because sendMessage handles it.
       // 2. Ensure alternating roles.
