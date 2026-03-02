@@ -15,7 +15,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta property="og:title" content="InfoGenius AI">
     <meta property="og:description" content="Your multipurpose AI assistant developed by Karan Ram.">
-    <meta property="og:image" content="favicon.ico">
+    <meta property="og:image" content="https://infogeniusai.onrender.com/favicon.ico">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="InfoGenius AI">
     <meta name="twitter:card" content="summary">
@@ -33,11 +33,16 @@
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
+  "url": "https://infogeniusai.onrender.com/",
   "name": "InfoGenius AI",
-  "alternateName": ["InfoGenius", "InfoGeniusAI"],
-  "url": "https://infogeniusai.onrender.com/"
+  "alternateName": "InfoGenius",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://infogeniusai.onrender.com/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
 }
-    </script>
+</script>
 </head>
 
 <body>
@@ -266,7 +271,7 @@
                     <img src="favicon.ico" alt="InfoGenius AI" class="footer-logo">
                     <span class="footer-brand-text">InfoGenius AI</span>
                 </div>
-                <p class="footer-copyright">&copy; 2025 InfoGenius AI. All rights reserved.</p>
+                <p class="footer-copyright">&copy; 2026 InfoGenius AI. All rights reserved.</p>
                 <p class="footer-credit">Created by <a href="#" class="footer-link">Karan Ram</a></p>
             </div>
             <a href="#" style="display: flex; justify-items: center; margin-top: 50px;" class="footer-scroll-top"
