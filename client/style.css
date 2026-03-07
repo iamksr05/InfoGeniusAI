@@ -87,41 +87,115 @@ textarea {
     gap: 12px;
 }
 
-.model-select {
+/* Toggle Switch styles */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     background: #1e1e24;
-    color: #e0e0e0;
+    padding: 6px 12px;
+    border-radius: 20px;
     border: 1px solid #2a2a35;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    outline: none;
+}
+
+.toggle-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #808090;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 100px;
+}
+
+.status-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #808090;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.toggle-container.online .status-indicator {
+    background-color: #00ff88;
+    box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+}
+
+.toggle-container.online .toggle-label {
+    color: #4a6cf7;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 34px;
+    height: 18px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
     cursor: pointer;
-    font-family: 'Inter', sans-serif;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #2a2a35;
+    transition: .4s;
 }
 
-.model-select:hover {
-    background: #2a2a35;
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.model-select option {
-    background: #1e1e24;
-    color: #e0e0e0;
+input:checked + .slider {
+    background-color: #4a6cf7;
 }
 
-/* Light mode support */
-body.light-mode .model-select {
+input:focus + .slider {
+    box-shadow: 0 0 1px #4a6cf7;
+}
+
+input:checked + .slider:before {
+    transform: translateX(16px);
+}
+
+.slider.round {
+    border-radius: 18px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Light mode support for toggle */
+body.light-mode .toggle-container {
     background: #e0e0e0;
-    color: #1a1a1a;
     border-color: #d0d0d0;
 }
 
-body.light-mode .model-select:hover {
-    background: #d0d0d0;
+body.light-mode .toggle-label {
+    color: #606070;
 }
 
-body.light-mode .model-select option {
-    background: #ffffff;
-    color: #1a1a1a;
+body.light-mode .slider {
+    background-color: #d0d0d0;
+}
+
+body.light-mode input:checked + .slider {
+    background-color: #3a3aeb;
 }
 
 .material-icons-round {

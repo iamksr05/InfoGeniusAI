@@ -27,10 +27,14 @@
     <header id="header">
       <div class="app-title">InfoGenius AI</div>
       <div class="header-controls">
-        <select id="model-select" class="model-select">
-          <option value="gemini">model 1</option>
-          <option value="openai">model 2</option>
-        </select>
+        <div class="toggle-container model-2-control">
+          <span class="status-indicator"></span>
+          <span class="toggle-label" id="model-2-status">Model 2 Offline</span>
+          <label class="switch">
+            <input type="checkbox" id="model-toggle">
+            <span class="slider round"></span>
+          </label>
+        </div>
         <button class="icon-btn" id="theme-btn"><span class="material-icons-round">light_mode</span></button>
       </div>
     </header>
@@ -53,46 +57,6 @@
     </div>
   </div>
 
-  <script>
-    const themeBtn = document.getElementById('theme-btn');
-    const themeIcon = themeBtn.querySelector('span');
-    const body = document.body;
-
-    themeBtn.addEventListener('click', () => {
-      body.classList.toggle('light-mode');
-      if (body.classList.contains('light-mode')) {
-        themeIcon.textContent = 'dark_mode';
-      } else {
-        themeIcon.textContent = 'light_mode';
-      }
-    });
-
-    const promptField = document.getElementById('prompt');
-    const sendBtn = document.getElementById('sendButton');
-
-    promptField.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        e.stopPropagation();
-        sendBtn.click();
-      }
-    });
-  </script>
-
-  <script>
-    if ("serviceWorker" in navigator) {
-      window.addEventListener("load", function () {
-        navigator.serviceWorker
-          .register("./service-worker.js?v=3")
-          .then(function (registration) {
-            console.log("Service Worker registered with scope:", registration.scope);
-          })
-          .catch(function (error) {
-            console.log("Service Worker registration failed:", error);
-          });
-      });
-    }
-  </script>
 
   <script type="module" src="script.js"></script>
 </body>

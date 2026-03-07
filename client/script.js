@@ -59,10 +59,16 @@ const AI_LOGO_PATH = getAILogoPath();
 
 const form = document.querySelector("form");
 const chatContainer = document.querySelector("#chat_container");
+const sendButton = document.getElementById("sendButton");
 const sendIcon = document.getElementById("sendIcon");
+const themeBtn = document.getElementById("theme-btn");
+const modelToggle = document.getElementById("model-toggle");
+const modelStatusLabel = document.getElementById("model-2-status");
+const toggleContainer = document.querySelector(".toggle-container");
+const promptInput = document.getElementById("prompt");
 
 let loadInterval;
-let lastRequestTime = 0; // Track the time of the last request
+let lastRequestTime = 0;
 
 // Generate a session ID once per page load - maintains history during session, clears on refresh
 // This is generated once when the script loads, so all requests in the same page session use the same ID
@@ -492,8 +498,8 @@ const handleSubmit = async (e) => {
 
   const data = new FormData(form);
   const prompt = data.get("prompt").trim(); // Trim any leading or trailing whitespace
-  const modelSelect = document.getElementById("model-select");
-  const selectedModel = modelSelect ? modelSelect.value : "openai";
+  // Use "openai" ONLY if Model 2 is explicitly turned "Online" (toggle checked)
+  const selectedModel = modelToggle && modelToggle.checked ? "openai" : "gemini";
 
   // Check if the message is empty, if so, do not submit
   if (!prompt) {
@@ -701,37 +707,87 @@ document.addEventListener("DOMContentLoaded", function () {
     heroSection.style.display = "flex";
   }
 
-  const promptInput = document.getElementById("prompt");
+  if (promptInput) {
+    promptInput.focus();
 
-  document.getElementById("prompt").focus();
-
-  // Auto-expand textarea on input
-  promptInput.addEventListener('input', () => {
-    autoExpandTextarea(promptInput);
-  });
-
-  // Auto-expand on paste
-  promptInput.addEventListener('paste', () => {
-    // Use setTimeout to wait for paste content to be inserted
-    setTimeout(() => {
+    // Auto-expand textarea on input
+    promptInput.addEventListener('input', () => {
       autoExpandTextarea(promptInput);
-    }, 0);
-  });
+    });
 
-  // Initial height adjustment
-  autoExpandTextarea(promptInput);
+    // Auto-expand on paste
+    promptInput.addEventListener('paste', () => {
+      setTimeout(() => {
+        autoExpandTextarea(promptInput);
+      }, 0);
+    });
 
-  form.addEventListener("submit", handleSubmit);
-  form.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e);
-    }
-  });
+    // Handle Enter key for submission
+    promptInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSubmit(e);
+      }
+    });
+
+    // Initial height adjustment
+    autoExpandTextarea(promptInput);
+  }
+
+  // Theme Toggling Logic
+  if (themeBtn) {
+    const themeIcon = themeBtn.querySelector('span');
+    const body = document.body;
+
+    themeBtn.addEventListener('click', () => {
+      body.classList.toggle('light-mode');
+      if (body.classList.contains('light-mode')) {
+        themeIcon.textContent = 'dark_mode';
+      } else {
+        themeIcon.textContent = 'light_mode';
+      }
+    });
+  }
+
+  if (form) {
+    form.addEventListener("submit", handleSubmit);
+  }
+
+  // Model 2 Status Logic
+  if (modelToggle && modelStatusLabel && toggleContainer) {
+    const updateModel2UI = (isOnline) => {
+      if (isOnline) {
+        modelStatusLabel.textContent = "Model 2 Online";
+        toggleContainer.classList.add("online");
+      } else {
+        modelStatusLabel.textContent = "Model 2 Offline";
+        toggleContainer.classList.remove("online");
+      }
+    };
+
+    // Load initial state
+    const isModel2Online = localStorage.getItem("model2_online") === "true";
+    modelToggle.checked = isModel2Online;
+    updateModel2UI(isModel2Online);
+
+    modelToggle.addEventListener("change", (e) => {
+      const isOnline = e.target.checked;
+      localStorage.setItem("model2_online", isOnline);
+      updateModel2UI(isOnline);
+    });
+  }
 });
 
-
+// Service Worker Registration
 if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js")
-    .then(() => console.log("Service Worker Registered"));
+  window.addEventListener("load", function () {
+    navigator.serviceWorker
+      .register("./service-worker.js?v=3")
+      .then(function (registration) {
+        console.log("Service Worker registered with scope:", registration.scope);
+      })
+      .catch(function (error) {
+        console.log("Service Worker registration failed:", error);
+      });
+  });
 }
