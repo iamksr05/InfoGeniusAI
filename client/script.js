@@ -586,7 +586,7 @@ const handleSubmit = async (e) => {
   loader(messageDiv);
 
   // Backend server URLs
-  const live = "https://updatedai-x4al.onrender.com";
+  const live = "https://infogeniusai-server.onrender.com";
   const dev = "http://localhost:5001"; // For local development only
 
   try {
